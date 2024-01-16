@@ -9,6 +9,7 @@ public class BoxFormation : BaseFormation
 
     public override IEnumerable<Vector3> EvaluatePositions()
     {
+
         //initialize formation
         for (int i = 0; i < width; i++)
         {
