@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class BaseFormation : MonoBehaviour
 {
-    [SerializeField][Range(1,8)] protected float Spread = 1f;
+    [SerializeField] [Range(1, 8)] protected float Spread = 1f;
     [SerializeField] [Range(0, 1)] float noise = 0;
     public abstract IEnumerable<Vector3> EvaluatePositions();
 
@@ -14,5 +14,5 @@ public abstract class BaseFormation : MonoBehaviour
 
         return new Vector3(pNoise, 0, pNoise);
     }
-    
+
 }

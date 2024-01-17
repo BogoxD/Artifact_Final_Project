@@ -35,30 +35,7 @@ public class FormationHandler : MonoBehaviour
     void Update()
     {
         SetUpFormation();
-
-        if (Input.GetKey(KeyCode.K))
-        {
-            MoveFormation();
-        }
     }
-    void Spawn(IEnumerable<Vector3> positions)
-    {
-        foreach (Vector3 pos in positions)
-        {
-            var unit = Instantiate(unitPrefab, transform.position + pos, Quaternion.identity, parent);
-            spawnedUnits.Add(unit);
-        }
-    }
-    void Kill(int num)
-    {
-        for (int i = 0; i < num; i++)
-        {
-            var unit = spawnedUnits.Last();
-            spawnedUnits.Remove(unit);
-            Destroy(unit.gameObject);
-        }
-    }
-
     void SetUpFormation()
     {
         unitPositions = Formation.EvaluatePositions().ToList();
@@ -79,17 +56,21 @@ public class FormationHandler : MonoBehaviour
             spawnedUnits[i].transform.position = Vector3.MoveTowards(spawnedUnits[i].transform.position, transform.position + unitPositions[i], unitSpeed * Time.deltaTime);
         }
     }
-    void MoveFormation()
+    void Spawn(IEnumerable<Vector3> positions)
     {
-
-        for (int i = 0; i < unitPositions.Count; i++)
+        foreach (Vector3 pos in positions)
         {
-            unitPositions[i] += new Vector3(10, 0, 10);
+            var unit = Instantiate(unitPrefab, transform.position + pos, Quaternion.identity, parent);
+            spawnedUnits.Add(unit);
         }
-        
-        for (int i = 0; i < spawnedUnits.Count; i++)
+    }
+    void Kill(int num)
+    {
+        for (int i = 0; i < num; i++)
         {
-            spawnedUnits[i].transform.position = Vector3.MoveTowards(spawnedUnits[i].transform.position, transform.position + unitPositions[i], unitSpeed * Time.deltaTime);
+            var unit = spawnedUnits.Last();
+            spawnedUnits.Remove(unit);
+            Destroy(unit.gameObject);
         }
     }
     private void OnDrawGizmos()

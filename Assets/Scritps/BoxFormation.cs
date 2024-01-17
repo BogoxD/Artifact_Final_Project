@@ -18,7 +18,7 @@ public class BoxFormation : BaseFormation
                 var pos = new Vector3(i, 0, j) * Spread;
                 pos += transform.position;
                 pos += Get2DNoise(pos);
-                
+
                 yield return pos;
 
             }
