@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a3b37da07628b34d8d5dd3fc364fbcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movingPoints: []
   unitPrefab: {fileID: 4078945737046587363, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
-  unitSpeed: 5
 --- !u!114 &5015159480054624923
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cae26c1d7659cc49bad86513a393289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Spread: 1
+  Spread: 2
   noise: 0
   width: 3
   depth: 3
