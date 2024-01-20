@@ -8,7 +8,6 @@ public class FormationHandler : MonoBehaviour
 {
     private BaseFormation formation;
 
-    public List<Transform> movingPoints;
 
     public BaseFormation Formation
     {
@@ -31,29 +30,11 @@ public class FormationHandler : MonoBehaviour
     {
         parent = new GameObject("Units").transform;
         parent.SetParent(gameObject.transform);
-
-        for (int i = 0; i < movingPoints.Count; i++)
-        {
-            movingPoints[i] = gameObject.transform.Find("Waypoints").GetChild(i);
-        }
     }
 
     void Update()
     {
         SetUpFormation();
-
-        if (Input.GetKey(KeyCode.Alpha1))
-        {
-            MoveFormation(movingPoints[0]);
-        }
-        if (Input.GetKey(KeyCode.Alpha2))
-        {
-            MoveFormation(movingPoints[1]);
-        }
-        if (Input.GetKey(KeyCode.Alpha3))
-        {
-            MoveFormation(movingPoints[2]);
-        }
     }
     void SetUpFormation()
     {
@@ -74,15 +55,6 @@ public class FormationHandler : MonoBehaviour
         {
             NavMeshAgent agentTmp = unitsComp[i].GetNavMeshAgent();
             agentTmp.SetDestination(transform.position + unitPositions[i]);
-        }
-    }
-    void MoveFormation(Transform point)
-    {
-        for (int i = 0; i < unitsComp.Count; i++)
-        {
-            NavMeshAgent agentTmp = unitsComp[i].GetNavMeshAgent();
-            unitPositions[i] += point.position;
-            agentTmp.SetDestination(unitPositions[i] + transform.position);
         }
     }
     void Spawn(IEnumerable<Vector3> positions)
