@@ -4,10 +4,8 @@ using System.Linq;
 using UnityEngine.AI;
 using UnityEngine;
 
-public class ArmyHandler : FormationHandler
+public class ArmyHandler : MonoBehaviour
 {
-    private FormationHandler formationHandler;
-
     [SerializeField] [Range(0, 10)] int armyWidth = 2;
     [SerializeField] [Range(0, 10)] int armyDepth = 2;
     [SerializeField] [Range(8, 20)] int Spread = 8;
@@ -20,11 +18,16 @@ public class ArmyHandler : FormationHandler
 
     protected List<GameObject> spawnedFormations = new List<GameObject>();
     protected List<Vector3> formationPositions = new List<Vector3>();
+
+    public List<Transform> waypoints;
     
     private void Update()
     {
         SetupArmy();
-
+        if(Input.GetKey(KeyCode.Alpha2))
+        {
+            MoveArmy(waypoints[0]);
+        }
     }
     void SetupArmy()
     {
@@ -42,20 +45,17 @@ public class ArmyHandler : FormationHandler
         {
             KillFormation(spawnedFormations.Count - formationPositions.Count);
         }
-        for(int i = 0; i < unitPositions.Count; i++)
+        for (int i = 0; i < formationPositions.Count; i++)
         {
-            int mid = unitPositions.Count / 2;
-            unitPositions[mid] = formationPositions[i];
-            //spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 5f * Time.deltaTime);
+            spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 5f * Time.deltaTime);
         }
-
     }
     public void MoveArmy(Transform point)
     {
         for (int i = 0; i < spawnedFormations.Count; i++)
         {
-            //formationPositions[i] += point.position;
-            //spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i] + transform.position, 5f * Time.deltaTime);
+            formationPositions[i] += point.position;
+            spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i] + transform.position, 5f * Time.deltaTime);
         }
     }
     void SpawnFormation(IEnumerable<Vector3> positions)
@@ -114,6 +114,10 @@ public class ArmyHandler : FormationHandler
                 yield return pos;
             }
         }
+    }
+    public IEnumerable<Vector3> GetFormationPositions()
+    {
+        return formationPositions;
     }
     private void OnDrawGizmos()
     {

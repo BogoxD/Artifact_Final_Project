@@ -24,21 +24,24 @@ public class FormationHandler : MonoBehaviour
     protected List<Unit> spawnedUnits = new List<Unit>();
     protected List<Vector3> unitPositions = new List<Vector3>();
 
-    public List<Transform> movingPoints;
-
+    public GameObject[] movingPoints;
+    private void Start()
+    {
+        movingPoints = GameObject.FindGameObjectsWithTag("Waypoint");
+    }
     void Update()
     {
         SetUpFormation();
 
-        if (Input.GetKey(KeyCode.Alpha1) && movingPoints.Count > 0)
+        if (Input.GetKey(KeyCode.Alpha1) && movingPoints.Length > 0)
         {
-            MoveArmy(movingPoints[0]);
+            MoveArmy(movingPoints[0].transform);
         }
     }
     void SetUpFormation()
     {
         unitPositions = Formation.EvaluatePositions().ToList();
-        
+
         //add units to formation
         if (unitPositions.Count > spawnedUnits.Count)
         {
