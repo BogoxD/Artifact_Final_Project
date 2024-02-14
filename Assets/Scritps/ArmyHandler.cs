@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine.AI;
 using UnityEngine;
 
-public class ArmyHandler : MonoBehaviour
+public class ArmyHandler : FormationHandler
 {
     private FormationHandler formationHandler;
 
@@ -13,12 +13,14 @@ public class ArmyHandler : MonoBehaviour
     [SerializeField] [Range(8, 20)] int Spread = 8;
     [SerializeField] [Range(2, 10)] int armySpeed = 2;
     [SerializeField] bool hollow = false;
+    [SerializeField] bool squareFormBool = true;
+    float Offset = 0f;
     
     public GameObject formationPrefab;
 
     protected List<GameObject> spawnedFormations = new List<GameObject>();
     protected List<Vector3> formationPositions = new List<Vector3>();
-
+    
     private void Update()
     {
         SetupArmy();
@@ -26,7 +28,10 @@ public class ArmyHandler : MonoBehaviour
     }
     void SetupArmy()
     {
-        formationPositions = FormationsPositionsEvaluation().ToList();
+        if (squareFormBool)
+            formationPositions = SquareFormation().ToList();
+        else
+            formationPositions = WedgeFormation().ToList();
 
         if(formationPositions.Count > spawnedFormations.Count)
         {
@@ -37,9 +42,11 @@ public class ArmyHandler : MonoBehaviour
         {
             KillFormation(spawnedFormations.Count - formationPositions.Count);
         }
-        for(int i = 0; i < spawnedFormations.Count; i++)
+        for(int i = 0; i < unitPositions.Count; i++)
         {
-            spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 5f * Time.deltaTime);
+            int mid = unitPositions.Count / 2;
+            unitPositions[mid] = formationPositions[i];
+            //spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 5f * Time.deltaTime);
         }
 
     }
@@ -68,7 +75,7 @@ public class ArmyHandler : MonoBehaviour
             Destroy(unit);
         }
     }
-    public IEnumerable<Vector3> FormationsPositionsEvaluation()
+    public IEnumerable<Vector3> SquareFormation()
     {
         Vector3 middleOffset = new Vector3(armyWidth * 0.5f, 0, armyDepth * 0.5f);
 
@@ -86,6 +93,26 @@ public class ArmyHandler : MonoBehaviour
 
             }
 
+        }
+    }
+    public IEnumerable<Vector3> WedgeFormation()
+    {
+        var middleOffset = new Vector3(0, 0, armyDepth * 0.5f);
+
+        for (int z = 0; z < armyDepth; z++)
+        {
+            for (var x = z * -1; x <= z; x++)
+            {
+                if (hollow && z < armyDepth - 1 && x > z * -1 && x < z) continue;
+
+                var pos = new Vector3(x + (z % 2 == 0 ? 0 : Offset), 0, z * -1);
+
+                pos -= middleOffset;
+
+                pos *= Spread;
+
+                yield return pos;
+            }
         }
     }
     private void OnDrawGizmos()
