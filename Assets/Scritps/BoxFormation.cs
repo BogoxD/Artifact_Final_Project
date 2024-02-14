@@ -6,6 +6,7 @@ public class BoxFormation : BaseFormation
 {
     [SerializeField][Range(0,20)] int width = 3;
     [SerializeField][Range(0,20)] int depth = 3;
+    [SerializeField] bool hollow = false;
     
     public override IEnumerable<Vector3> EvaluatePositions()
     {
@@ -16,6 +17,8 @@ public class BoxFormation : BaseFormation
         {
             for (int j = 0; j < depth; j++)
             {
+                if (hollow && i != 0 && i != width - 1 && j != 0 && j != depth - 1) continue;
+
                 var pos = new Vector3(i, 0, j) * Spread;
 
                 pos -= middleOffset;

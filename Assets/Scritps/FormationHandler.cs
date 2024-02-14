@@ -21,7 +21,7 @@ public class FormationHandler : MonoBehaviour
 
     [SerializeField] private GameObject unitPrefab;
 
-    public List<Unit> units = new List<Unit>();
+    public List<Unit> spawnedUnits = new List<Unit>();
     protected List<Vector3> unitPositions = new List<Vector3>();
     void Update()
     {
@@ -31,20 +31,20 @@ public class FormationHandler : MonoBehaviour
     {
         unitPositions = Formation.EvaluatePositions().ToList();
         //add units to formation
-        if (unitPositions.Count > units.Count)
+        if (unitPositions.Count > spawnedUnits.Count)
         {
-            var remainingPositions = unitPositions.Skip(units.Count);
+            var remainingPositions = unitPositions.Skip(spawnedUnits.Count);
             Spawn(remainingPositions);
         }
         //remove units from formation
-        if (unitPositions.Count < units.Count)
+        if (unitPositions.Count < spawnedUnits.Count)
         {
-            Kill(units.Count - unitPositions.Count);
+            Kill(spawnedUnits.Count - unitPositions.Count);
         }
         //move units to positions slots
-        for (int i = 0; i < units.Count; i++)
+        for (int i = 0; i < spawnedUnits.Count; i++)
         {
-            NavMeshAgent agentTmp = units[i].GetNavMeshAgent();
+            NavMeshAgent agentTmp = spawnedUnits[i].GetNavMeshAgent();
             agentTmp.SetDestination(transform.position + unitPositions[i]);
         }
     }
@@ -53,15 +53,15 @@ public class FormationHandler : MonoBehaviour
         foreach (Vector3 pos in positions)
         {
             var unit = Instantiate(unitPrefab, transform.position + pos, Quaternion.identity, transform);
-            units.Add(unit.GetComponent<Unit>());
+            spawnedUnits.Add(unit.GetComponent<Unit>());
         }
     }
     void Kill(int num)
     {
         for (int i = 0; i < num; i++)
         {
-            var unit = units.Last();
-            units.Remove(unit.GetComponent<Unit>());
+            var unit = spawnedUnits.Last();
+            spawnedUnits.Remove(unit.GetComponent<Unit>());
             Destroy(unit.gameObject);
         }
     }

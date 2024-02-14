@@ -2,16 +2,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WedgeFormation : MonoBehaviour
+public class WedgeFormation : BaseFormation
 {
-    public GameObject prefab;
-    [SerializeField, Range(1, 5)] int rows = 3;
-    [SerializeField] int spread = 2;
+    [SerializeField] int unitDepth = 5;
+    [SerializeField] private bool hollow = false;
+    [SerializeField] float Offset = 0;
 
-    private void Start()
+    public override IEnumerable<Vector3> EvaluatePositions()
     {
-        WedgeForm();
+        var middleOffset = new Vector3(0, 0, unitDepth * 0.5f);
+
+        for(int z = 0; z < unitDepth; z++)
+        {
+            for(var x = z * -1f; x <=z; x++)
+            {
+                if (hollow && z < unitDepth - 1 && x > z * -1 && x < z) continue;
+
+                var pos = new Vector3(x + (z % 2 == 0 ? 0 : Offset), 0, z);
+
+                pos -= middleOffset;
+
+                pos += Get2DNoise(pos);
+
+                pos *= Spread;
+
+                yield return pos;
+            }
+        }
     }
+
+    //first iterration
+    /*
+    public GameObject prefab;
+    int rows = 3;
+    int spread = 2;
     public void WedgeForm()
     {
         Vector3 targetPosition = new Vector3(-1, 10, 0);
@@ -34,5 +58,6 @@ public class WedgeFormation : MonoBehaviour
 
         }
 
-    }
+    }*/
+
 }
