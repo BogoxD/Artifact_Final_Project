@@ -5,11 +5,21 @@ using UnityEngine.AI;
 
 public class Unit : MonoBehaviour
 {
-    NavMeshAgent navAgent;
-    
+    private NavMeshAgent navAgent;
+    private Rigidbody rb;
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
+
     public NavMeshAgent GetNavMeshAgent()
     {
         navAgent = GetComponent<NavMeshAgent>();
         return navAgent;
+    }
+
+    private void Update()
+    {
     }
 }

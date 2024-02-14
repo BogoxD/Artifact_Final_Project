@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class ArmyHandler : FormationHandler
 {
+    private FormationHandler formationHandler;
+
     [SerializeField] [Range(0, 10)] int armyWidth = 2;
     [SerializeField] [Range(0, 10)] int armyDepth = 2;
     [SerializeField] [Range(8, 20)] int Spread = 8;
@@ -18,11 +20,6 @@ public class ArmyHandler : FormationHandler
     protected List<GameObject> spawnedFormations = new List<GameObject>();
     protected List<Vector3> formationPositions = new List<Vector3>();
 
-
-    private void Awake()
-    {
-
-    }
     private void Update()
     {
         SetupArmy();
