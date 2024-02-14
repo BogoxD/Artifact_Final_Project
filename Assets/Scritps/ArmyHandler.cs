@@ -30,6 +30,7 @@ public class ArmyHandler : FormationHandler
         {
             MoveArmy(waypoints[0]);
         }
+
     }
     void SetupArmy()
     {

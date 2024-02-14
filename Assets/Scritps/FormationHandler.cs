@@ -7,6 +7,9 @@ using UnityEngine;
 public class FormationHandler : MonoBehaviour
 {
     private BaseFormation formation;
+    [SerializeField] bool move1 = false;
+    [SerializeField] bool move2 = false;
+    float avgSpeed = 0f;
 
     public BaseFormation Formation
     {
@@ -33,9 +36,13 @@ public class FormationHandler : MonoBehaviour
     {
         SetUpFormation();
 
-        if (Input.GetKey(KeyCode.Alpha1) && movingPoints.Length > 0)
+        if (move1 && movingPoints.Length > 0)
         {
             MoveUnits(movingPoints[0].transform);
+        }
+        if (move2 && movingPoints.Length > 0)
+        {
+            MoveUnits(movingPoints[1].transform);
         }
     }
     void SetUpFormation()
@@ -68,6 +75,15 @@ public class FormationHandler : MonoBehaviour
             spawnedUnits[i].GetComponent<NavMeshAgent>().SetDestination(unitPositions[i]);
         }
     }
+    /*private float CalculateAvgFormationSpeed(List<Unit> spawnedUnits)
+    {
+        float speed = 0f;
+
+        for(int i = 0; i < spawnedUnits.Count; i++)
+        {
+            speed = spawnedUnits[i].rb.velocity
+        }
+    }*/
     void Spawn(IEnumerable<Vector3> positions)
     {
         foreach (Vector3 pos in positions)

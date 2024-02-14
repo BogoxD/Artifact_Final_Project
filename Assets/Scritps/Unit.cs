@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class Unit : MonoBehaviour
 {
     private NavMeshAgent navAgent;
-    private Rigidbody rb;
+    public Rigidbody rb;
 
     private void Start()
     {
