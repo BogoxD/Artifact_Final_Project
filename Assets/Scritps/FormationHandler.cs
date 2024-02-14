@@ -21,15 +21,24 @@ public class FormationHandler : MonoBehaviour
 
     [SerializeField] private GameObject unitPrefab;
 
-    public List<Unit> spawnedUnits = new List<Unit>();
+    protected List<Unit> spawnedUnits = new List<Unit>();
     protected List<Vector3> unitPositions = new List<Vector3>();
+
+    public List<Transform> movingPoints;
+
     void Update()
     {
         SetUpFormation();
+
+        if (Input.GetKey(KeyCode.Alpha1) && movingPoints.Count > 0)
+        {
+            MoveArmy(movingPoints[0]);
+        }
     }
     void SetUpFormation()
     {
         unitPositions = Formation.EvaluatePositions().ToList();
+        
         //add units to formation
         if (unitPositions.Count > spawnedUnits.Count)
         {
@@ -45,14 +54,22 @@ public class FormationHandler : MonoBehaviour
         for (int i = 0; i < spawnedUnits.Count; i++)
         {
             NavMeshAgent agentTmp = spawnedUnits[i].GetNavMeshAgent();
-            agentTmp.SetDestination(transform.position + unitPositions[i]);
+            agentTmp.SetDestination(unitPositions[i]);
+        }
+    }
+    public void MoveArmy(Transform point)
+    {
+        for (int i = 0; i < spawnedUnits.Count; i++)
+        {
+            unitPositions[i] += point.position;
+            spawnedUnits[i].GetComponent<NavMeshAgent>().SetDestination(unitPositions[i]);
         }
     }
     void Spawn(IEnumerable<Vector3> positions)
     {
         foreach (Vector3 pos in positions)
         {
-            var unit = Instantiate(unitPrefab, transform.position + pos, Quaternion.identity, transform);
+            var unit = Instantiate(unitPrefab, pos, Quaternion.identity, transform);
             spawnedUnits.Add(unit.GetComponent<Unit>());
         }
     }

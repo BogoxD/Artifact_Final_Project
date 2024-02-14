@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine.AI;
 using UnityEngine;
 
-public class ArmyHandler : FormationHandler
+public class ArmyHandler : MonoBehaviour
 {
     private FormationHandler formationHandler;
 
@@ -16,8 +16,6 @@ public class ArmyHandler : FormationHandler
     
     public GameObject formationPrefab;
 
-    public List<Transform> movingPoints;
-
     protected List<GameObject> spawnedFormations = new List<GameObject>();
     protected List<Vector3> formationPositions = new List<Vector3>();
 
@@ -25,18 +23,6 @@ public class ArmyHandler : FormationHandler
     {
         SetupArmy();
 
-        if (Input.GetKey(KeyCode.Alpha1))
-        {
-            MoveArmy(movingPoints[0]);
-        }
-        if (Input.GetKey(KeyCode.Alpha2))
-        {
-            MoveArmy(movingPoints[1]);
-        }
-        if (Input.GetKey(KeyCode.Alpha3))
-        {
-            MoveArmy(movingPoints[2]);
-        }
     }
     void SetupArmy()
     {
@@ -61,15 +47,15 @@ public class ArmyHandler : FormationHandler
     {
         for (int i = 0; i < spawnedFormations.Count; i++)
         {
-            formationPositions[i] += point.position;
-            spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i] + transform.position, 5f * Time.deltaTime);
+            //formationPositions[i] += point.position;
+            //spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i] + transform.position, 5f * Time.deltaTime);
         }
     }
     void SpawnFormation(IEnumerable<Vector3> positions)
     {
         foreach (Vector3 pos in positions)
         {
-            var unit = Instantiate(formationPrefab, transform.position + pos, Quaternion.identity, transform);
+            var unit = Instantiate(formationPrefab, pos, Quaternion.identity, transform);
             spawnedFormations.Add(unit);
         }
     }
