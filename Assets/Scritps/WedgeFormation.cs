@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WedgeFormation : BaseFormation
 {
-    [SerializeField] int unitDepth = 5;
+    [SerializeField, Range(1,10)] int unitDepth = 3;
     [SerializeField] private bool hollow = false;
     [SerializeField] float Offset = 0;
 
@@ -14,11 +14,11 @@ public class WedgeFormation : BaseFormation
 
         for(int z = 0; z < unitDepth; z++)
         {
-            for(var x = z * -1f; x <=z; x++)
+            for(var x = z * -1; x <=z; x++)
             {
                 if (hollow && z < unitDepth - 1 && x > z * -1 && x < z) continue;
 
-                var pos = new Vector3(x + (z % 2 == 0 ? 0 : Offset), 0, z);
+                var pos = new Vector3(x + (z % 2 == 0 ? 0 : Offset), 0, z * -1);
 
                 pos -= middleOffset;
 

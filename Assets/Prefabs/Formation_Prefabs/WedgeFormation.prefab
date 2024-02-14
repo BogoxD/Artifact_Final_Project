@@ -61,6 +61,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Spread: 2
   noise: 0
-  unitDepth: 5
+  unitDepth: 3
   hollow: 0
   Offset: 0

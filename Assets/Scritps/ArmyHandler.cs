@@ -12,6 +12,7 @@ public class ArmyHandler : FormationHandler
     [SerializeField] [Range(0, 10)] int armyDepth = 2;
     [SerializeField] [Range(8, 20)] int Spread = 8;
     [SerializeField] [Range(2, 10)] int armySpeed = 2;
+    [SerializeField] bool hollow = false;
     
     public GameObject formationPrefab;
 
@@ -89,6 +90,8 @@ public class ArmyHandler : FormationHandler
         {
             for (int j = 0; j < armyDepth; j++)
             {
+                if (hollow && i != 0 && i < armyWidth - 1 && j != 0 && j < armyDepth - 1) continue;
+                
                 var pos = new Vector3(i, 0, j) * Spread;
 
                 pos -= middleOffset;
