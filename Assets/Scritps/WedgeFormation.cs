@@ -20,6 +20,8 @@ public class WedgeFormation : BaseFormation
 
                 var pos = new Vector3(x + (z % 2 == 0 ? 0 : Offset), 0, z * -1);
 
+                pos += transform.position;
+
                 pos -= middleOffset;
 
                 pos += Get2DNoise(pos);

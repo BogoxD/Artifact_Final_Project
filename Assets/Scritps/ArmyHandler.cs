@@ -4,14 +4,16 @@ using System.Linq;
 using UnityEngine.AI;
 using UnityEngine;
 
-public class ArmyHandler : MonoBehaviour
+public class ArmyHandler : FormationHandler
 {
     [SerializeField] [Range(0, 10)] int armyWidth = 2;
     [SerializeField] [Range(0, 10)] int armyDepth = 2;
     [SerializeField] [Range(8, 20)] int Spread = 8;
     [SerializeField] [Range(2, 10)] int armySpeed = 2;
+    [SerializeField] [Range(1, 10)] float noise = 0f;
     [SerializeField] bool hollow = false;
     [SerializeField] bool squareFormBool = true;
+    
     float Offset = 0f;
     
     public GameObject formationPrefab;
@@ -87,6 +89,8 @@ public class ArmyHandler : MonoBehaviour
                 
                 var pos = new Vector3(i, 0, j) * Spread;
 
+                pos += GetArmyNoise(pos);
+
                 pos -= middleOffset;
 
                 yield return pos;
@@ -109,6 +113,8 @@ public class ArmyHandler : MonoBehaviour
 
                 pos -= middleOffset;
 
+                pos += GetArmyNoise(pos);
+
                 pos *= Spread;
 
                 yield return pos;
@@ -118,6 +124,12 @@ public class ArmyHandler : MonoBehaviour
     public IEnumerable<Vector3> GetFormationPositions()
     {
         return formationPositions;
+    }
+    public Vector3 GetArmyNoise(Vector3 pos)
+    {
+        var pNoise = Mathf.PerlinNoise(pos.x * noise, pos.z * noise);
+
+        return new Vector3(pNoise, 0, pNoise);
     }
     private void OnDrawGizmos()
     {

@@ -35,7 +35,7 @@ public class FormationHandler : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Alpha1) && movingPoints.Length > 0)
         {
-            MoveArmy(movingPoints[0].transform);
+            MoveUnits(movingPoints[0].transform);
         }
     }
     void SetUpFormation()
@@ -60,7 +60,7 @@ public class FormationHandler : MonoBehaviour
             agentTmp.SetDestination(unitPositions[i]);
         }
     }
-    public void MoveArmy(Transform point)
+    public void MoveUnits(Transform point)
     {
         for (int i = 0; i < spawnedUnits.Count; i++)
         {
