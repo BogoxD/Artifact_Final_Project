@@ -45,7 +45,7 @@ public class ArmyHandler : FormationHandler
         }
         for (int i = 0; i < formationPositions.Count; i++)
         {
-            //spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 5f * Time.deltaTime);
+            spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 5f * Time.deltaTime);
         }
     }
     public void MoveArmy(Transform point)
