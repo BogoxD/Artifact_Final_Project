@@ -9,7 +9,7 @@ public class FormationHandler : MonoBehaviour
     private BaseFormation formation;
     [SerializeField] bool move1 = false;
     [SerializeField] bool move2 = false;
-    float avgSpeed = 0f;
+    [SerializeField] bool move3 = false;
 
     public BaseFormation Formation
     {
@@ -44,6 +44,15 @@ public class FormationHandler : MonoBehaviour
         {
             MoveUnits(movingPoints[1].transform);
         }
+        if (move3 && movingPoints.Length > 0)
+        {
+            MoveUnits(movingPoints[2].transform);
+        }
+        if (transform.parent)
+        {
+            move1 = transform.parent.GetComponent<ArmyHandler>().move1;
+            move1 = transform.parent.GetComponent<ArmyHandler>().move2;
+        }
     }
     void SetUpFormation()
     {
@@ -75,22 +84,20 @@ public class FormationHandler : MonoBehaviour
             spawnedUnits[i].GetComponent<NavMeshAgent>().SetDestination(unitPositions[i]);
         }
     }
-    //TO IMPLEMENT
-    /*private float CalculateAvgFormationSpeed(List<Unit> spawnedUnits)
-    {
-        float speed = 0f;
 
-        for(int i = 0; i < spawnedUnits.Count; i++)
-        {
-            speed = spawnedUnits[i].rb.velocity
-        }
-    }*/
     void Spawn(IEnumerable<Vector3> positions)
     {
         foreach (Vector3 pos in positions)
         {
             var unit = Instantiate(unitPrefab, pos, Quaternion.identity, transform);
             spawnedUnits.Add(unit.GetComponent<Unit>());
+
+            //ignore collision between last spawned unit and the newest spawned unit
+            //to optimize later
+            for (int i = spawnedUnits.Count - 1; i >= 0; i--)
+            {
+                Physics.IgnoreCollision(unit.GetComponent<CapsuleCollider>(), spawnedUnits[i].GetComponent<CapsuleCollider>(), true);
+            }
         }
     }
     void Kill(int num)
@@ -102,6 +109,16 @@ public class FormationHandler : MonoBehaviour
             Destroy(unit.gameObject);
         }
     }
+    //TO IMPLEMENT
+    /*private float CalculateAvgFormationSpeed(List<Unit> spawnedUnits)
+    {
+        float speed = 0f;
+
+        for(int i = 0; i < spawnedUnits.Count; i++)
+        {
+            speed = spawnedUnits[i].rb.velocity
+        }
+    }*/
     private void OnDrawGizmos()
     {
         for (int i = 0; i < unitPositions.Count; i++)
