@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RadialFormation : BaseFormation
 {
-    [SerializeField] [Range(0,20)] private int ammount = 10;
+    [SerializeField] [Range(0,40)] private int ammount = 10;
     [SerializeField] [Range(1,10)]private float radius = 1f;
     [SerializeField][Range(1, 10)] private float rotations = 1f;
     [SerializeField][Range(1,5)] private int rings = 1;
