@@ -39,10 +39,9 @@ public class FormationHandler : MonoBehaviour
     void Update()
     {
         SetUpFormation();
-        if (distancesFromUnitsToPoints.Count > 0)
-            fartherestUnitIndex = FindFarUnitIndex();
 
         avarageSpeed = ReturnAvarageSpeed(spawnedUnits);
+
         if (move1 && movingPoints.Length > 0)
         {
             MoveUnits(movingPoints[0].transform);
@@ -61,6 +60,9 @@ public class FormationHandler : MonoBehaviour
             move2 = transform.parent.GetComponent<ArmyHandler>().move2;
             move3 = transform.parent.GetComponent<ArmyHandler>().move3;
         }
+
+        if (distancesFromUnitsToPoints.Count > 0)
+            fartherestUnitIndex = FindFarUnitIndex();
 
         distancesFromUnitsToPoints = CalculateDistanceFromUnitToPoint(spawnedUnits, unitPositions);
     }
@@ -86,6 +88,18 @@ public class FormationHandler : MonoBehaviour
             agentTmp.SetDestination(unitPositions[i]);
 
             transform.rotation = Quaternion.LookRotation(transform.forward);
+
+            //the fartherst unit
+            if(i == fartherestUnitIndex)
+            {
+                agentTmp.acceleration = 14f;
+                agentTmp.speed = 7f;
+            }
+            else
+            {
+                agentTmp.speed = 3.5f;
+                agentTmp.acceleration = 8f;
+            }
         }
     }
     public void MoveUnits(Transform point)
@@ -134,6 +148,7 @@ public class FormationHandler : MonoBehaviour
         }
         return index;
     }
+    //to be implemented
     void FindCenterOfMassPosition()
     {
 
