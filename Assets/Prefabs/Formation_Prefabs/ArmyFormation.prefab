@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6028010042425623683}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.968781, y: 1, z: -65.9}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -44,12 +44,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5701feede8df1e499b8131ec3ce77fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  move1: 0
+  move2: 0
+  move3: 0
   unitPrefab: {fileID: 4078945737046587363, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
-  armyWidth: 1
-  armyDepth: 1
-  Spread: 8
-  formationPrefab: {fileID: 5015159480054624926, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+  spawnedUnits: []
+  unitPositions: []
   movingPoints:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  armyWidth: 1
+  armyDepth: 1
+  Spread: 8
+  armySpeed: 2
+  noise: 0
+  hollow: 0
+  squareFormBool: 1
+  formationPrefab: {fileID: 5015159480054624926, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+  waypoints: []

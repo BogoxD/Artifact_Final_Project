@@ -18,8 +18,8 @@ public class ArmyHandler : FormationHandler
     
     public GameObject formationPrefab;
 
-    protected List<GameObject> spawnedFormations = new List<GameObject>();
-    protected List<Vector3> formationPositions = new List<Vector3>();
+    public List<GameObject> spawnedFormations = new List<GameObject>();
+    public List<Vector3> formationPositions = new List<Vector3>();
 
     public List<Transform> waypoints;
     
@@ -45,7 +45,7 @@ public class ArmyHandler : FormationHandler
         }
         for (int i = 0; i < formationPositions.Count; i++)
         {
-            spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 5f * Time.deltaTime);
+            //spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 5f * Time.deltaTime);
         }
     }
     public void MoveArmy(Transform point)

@@ -7,6 +7,7 @@ using UnityEngine;
 public class FormationHandler : MonoBehaviour
 {
     private BaseFormation formation;
+
     [SerializeField] bool move1 = false;
     [SerializeField] bool move2 = false;
     [SerializeField] bool move3 = false;
@@ -24,13 +25,15 @@ public class FormationHandler : MonoBehaviour
 
     [SerializeField] private GameObject unitPrefab;
 
-    protected List<Unit> spawnedUnits = new List<Unit>();
-    protected List<Vector3> unitPositions = new List<Vector3>();
-
+    public List<Unit> spawnedUnits = new List<Unit>();
+    public List<Vector3> unitPositions = new List<Vector3>();
     public GameObject[] movingPoints;
+    private ArmyHandler armyHandler;
     private void Start()
     {
         movingPoints = GameObject.FindGameObjectsWithTag("Waypoint");
+        if (transform.parent)
+            armyHandler = transform.parent.GetComponent<ArmyHandler>();
     }
     void Update()
     {
@@ -75,6 +78,8 @@ public class FormationHandler : MonoBehaviour
         {
             NavMeshAgent agentTmp = spawnedUnits[i].GetNavMeshAgent();
             agentTmp.SetDestination(unitPositions[i]);
+
+            transform.rotation = Quaternion.LookRotation(transform.forward);
         }
     }
     public void MoveUnits(Transform point)
@@ -85,20 +90,12 @@ public class FormationHandler : MonoBehaviour
             spawnedUnits[i].GetComponent<NavMeshAgent>().SetDestination(unitPositions[i]);
         }
     }
-
     void Spawn(IEnumerable<Vector3> positions)
     {
         foreach (Vector3 pos in positions)
         {
             var unit = Instantiate(unitPrefab, pos, Quaternion.identity, transform);
             spawnedUnits.Add(unit.GetComponent<Unit>());
-
-            //ignore collision between last spawned unit and the newest spawned unit
-            //to optimize later
-            for (int i = spawnedUnits.Count - 1; i >= 0; i--)
-            {
-                Physics.IgnoreCollision(unit.GetComponent<CapsuleCollider>(), spawnedUnits[i].GetComponent<CapsuleCollider>(), true);
-            }
         }
     }
     void Kill(int num)
@@ -110,16 +107,6 @@ public class FormationHandler : MonoBehaviour
             Destroy(unit.gameObject);
         }
     }
-    //TO IMPLEMENT
-    /*private float CalculateAvgFormationSpeed(List<Unit> spawnedUnits)
-    {
-        float speed = 0f;
-
-        for(int i = 0; i < spawnedUnits.Count; i++)
-        {
-            speed = spawnedUnits[i].rb.velocity
-        }
-    }*/
     private void OnDrawGizmos()
     {
         for (int i = 0; i < unitPositions.Count; i++)
