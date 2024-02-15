@@ -12,7 +12,8 @@ public class FormationHandler : MonoBehaviour
     [SerializeField] bool move2 = false;
     [SerializeField] bool move3 = false;
     [SerializeField] float avarageSpeed;
-    [SerializeField] List<float> distancesFromUtoP;
+    [SerializeField] List<float> distancesFromUnitsToPoints;
+    [SerializeField] int fartherestUnitIndex;
 
     public BaseFormation Formation
     {
@@ -38,6 +39,8 @@ public class FormationHandler : MonoBehaviour
     void Update()
     {
         SetUpFormation();
+        if (distancesFromUnitsToPoints.Count > 0)
+            fartherestUnitIndex = FindFarUnitIndex();
 
         avarageSpeed = ReturnAvarageSpeed(spawnedUnits);
         if (move1 && movingPoints.Length > 0)
@@ -59,7 +62,7 @@ public class FormationHandler : MonoBehaviour
             move3 = transform.parent.GetComponent<ArmyHandler>().move3;
         }
 
-        distancesFromUtoP = CalculateDistanceFromUnitToPoint(spawnedUnits, unitPositions);
+        distancesFromUnitsToPoints = CalculateDistanceFromUnitToPoint(spawnedUnits, unitPositions);
     }
     void SetUpFormation()
     {
@@ -115,6 +118,25 @@ public class FormationHandler : MonoBehaviour
             distancesFromUnitToPoint.Add(Vector3.Distance(spawnedUnits[i].transform.position, unitPositions[i]));
         }
         return distancesFromUnitToPoint;
+    }
+    int FindFarUnitIndex()
+    {
+        float val = distancesFromUnitsToPoints[0];
+        int index = 0;
+
+        for (int i = 1; i < distancesFromUnitsToPoints.Count; i++)
+        {
+            if (val < distancesFromUnitsToPoints[i])
+            {
+                val = distancesFromUnitsToPoints[i];
+                index = i;
+            }
+        }
+        return index;
+    }
+    void FindCenterOfMassPosition()
+    {
+
     }
 
     void Spawn(IEnumerable<Vector3> positions)
