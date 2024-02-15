@@ -10,7 +10,7 @@ public class ArmyHandler : FormationHandler
     [SerializeField] [Range(0, 10)] int armyDepth = 2;
     [SerializeField] [Range(8, 20)] int Spread = 8;
     [SerializeField] [Range(2, 10)] int armySpeed = 2;
-    [SerializeField] [Range(1, 10)] float noise = 0f;
+    [SerializeField] [Range(0, 1)] float noise = 0f;
     [SerializeField] bool hollow = false;
     [SerializeField] bool squareFormBool = true;
     

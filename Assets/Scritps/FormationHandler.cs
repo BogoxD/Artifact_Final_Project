@@ -14,6 +14,7 @@ public class FormationHandler : MonoBehaviour
     [SerializeField] float avarageSpeed;
     [SerializeField] List<float> distancesFromUnitsToPoints;
     [SerializeField] int fartherestUnitIndex;
+    private Vector3 centerOfMass = new();
 
     public BaseFormation Formation
     {
@@ -41,6 +42,8 @@ public class FormationHandler : MonoBehaviour
         SetUpFormation();
 
         avarageSpeed = ReturnAvarageSpeed(spawnedUnits);
+        
+        centerOfMass = FindCenterOfMass(spawnedUnits);
 
         if (move1 && movingPoints.Length > 0)
         {
@@ -92,11 +95,13 @@ public class FormationHandler : MonoBehaviour
             //the fartherst unit
             if(i == fartherestUnitIndex)
             {
-                agentTmp.acceleration = 14f;
-                agentTmp.speed = 7f;
+                agentTmp.acceleration = 11f;
+                agentTmp.speed = 5f;
             }
             else
             {
+                //slow down other units by clamping their speed from 0 to avarge speed of formation
+                Mathf.Clamp(agentTmp.speed, 0, avarageSpeed);
                 agentTmp.speed = 3.5f;
                 agentTmp.acceleration = 8f;
             }
@@ -148,10 +153,19 @@ public class FormationHandler : MonoBehaviour
         }
         return index;
     }
-    //to be implemented
-    void FindCenterOfMassPosition()
+    public Vector3 FindCenterOfMass(List<Unit> spawnedUnits)
     {
+        var totalX = 0f;
+        var totalZ = 0f;
+        foreach(Unit unit in spawnedUnits)
+        {
+            totalX += unit.transform.position.x;
+            totalZ += unit.transform.position.z;
+        }
+        var centerX = totalX / spawnedUnits.Count;
+        var centerZ = totalZ / spawnedUnits.Count;
 
+        return new Vector3(centerX, 0, centerZ);
     }
 
     void Spawn(IEnumerable<Vector3> positions)
@@ -177,5 +191,7 @@ public class FormationHandler : MonoBehaviour
         {
             Gizmos.DrawSphere(unitPositions[i], 0.5f);
         }
+
+        Gizmos.DrawCube(centerOfMass, Vector3.one);
     }
 }
