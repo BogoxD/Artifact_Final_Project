@@ -26,11 +26,6 @@ public class ArmyHandler : FormationHandler
     private void Update()
     {
         SetupArmy();
-        if(Input.GetKey(KeyCode.Alpha2))
-        {
-            MoveArmy(waypoints[0]);
-        }
-
     }
     void SetupArmy()
     {

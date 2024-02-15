@@ -51,7 +51,8 @@ public class FormationHandler : MonoBehaviour
         if (transform.parent)
         {
             move1 = transform.parent.GetComponent<ArmyHandler>().move1;
-            move1 = transform.parent.GetComponent<ArmyHandler>().move2;
+            move2 = transform.parent.GetComponent<ArmyHandler>().move2;
+            move3 = transform.parent.GetComponent<ArmyHandler>().move3;
         }
     }
     void SetUpFormation()
