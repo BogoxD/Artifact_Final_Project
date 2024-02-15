@@ -11,6 +11,7 @@ public class FormationHandler : MonoBehaviour
     [SerializeField] bool move1 = false;
     [SerializeField] bool move2 = false;
     [SerializeField] bool move3 = false;
+    [SerializeField] float avarageSpeed;
 
     public BaseFormation Formation
     {
@@ -28,16 +29,16 @@ public class FormationHandler : MonoBehaviour
     public List<Unit> spawnedUnits = new List<Unit>();
     public List<Vector3> unitPositions = new List<Vector3>();
     public GameObject[] movingPoints;
-    private ArmyHandler armyHandler;
+
     private void Start()
     {
         movingPoints = GameObject.FindGameObjectsWithTag("Waypoint");
-        if (transform.parent)
-            armyHandler = transform.parent.GetComponent<ArmyHandler>();
     }
     void Update()
     {
         SetUpFormation();
+
+        avarageSpeed = ReturnAvarageSpeed(spawnedUnits);
 
         if (move1 && movingPoints.Length > 0)
         {
@@ -90,6 +91,20 @@ public class FormationHandler : MonoBehaviour
             spawnedUnits[i].GetComponent<NavMeshAgent>().SetDestination(unitPositions[i]);
         }
     }
+    float ReturnAvarageSpeed(List<Unit> spawnedUnits)
+    {
+        float avarageTotal = 0f;
+        float finalTotal = 0f;
+
+        for(int i = 0; i < spawnedUnits.Count; i++)
+        {
+            avarageTotal += spawnedUnits[i].magnitude;
+        }
+        finalTotal = avarageTotal / spawnedUnits.Count;
+        
+        return finalTotal;
+    }
+
     void Spawn(IEnumerable<Vector3> positions)
     {
         foreach (Vector3 pos in positions)

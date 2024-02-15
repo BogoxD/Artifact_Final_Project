@@ -7,8 +7,8 @@ public class Unit : MonoBehaviour
 {
     private NavMeshAgent navAgent;
     public Rigidbody rb;
-    [SerializeField] Vector3 velocity;
-    [SerializeField] float magnitude;
+    [SerializeField] public Vector3 velocity;
+    [SerializeField] public float magnitude;
 
     private void Awake()
     {
