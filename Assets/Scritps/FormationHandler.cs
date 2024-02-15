@@ -75,6 +75,7 @@ public class FormationHandler : MonoBehaviour
             spawnedUnits[i].GetComponent<NavMeshAgent>().SetDestination(unitPositions[i]);
         }
     }
+    //TO IMPLEMENT
     /*private float CalculateAvgFormationSpeed(List<Unit> spawnedUnits)
     {
         float speed = 0f;
