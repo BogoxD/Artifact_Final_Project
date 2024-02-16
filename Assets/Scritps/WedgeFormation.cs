@@ -8,7 +8,7 @@ public class WedgeFormation : BaseFormation
     [SerializeField] private bool hollow = false;
     [SerializeField] float Offset = 0;
 
-    public override IEnumerable<Vector3> EvaluatePositions()
+    public override IEnumerable<Vector3> EvaluatePositions(Vector3 formationPoint)
     {
         var middleOffset = new Vector3(0, 0, unitDepth * 0.5f);
 

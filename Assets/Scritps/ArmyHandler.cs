@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine.AI;
 using UnityEngine;
 
-public class ArmyHandler : FormationHandler
+public class ArmyHandler : MonoBehaviour
 {
     [SerializeField] [Range(0, 10)] int armyWidth = 2;
     [SerializeField] [Range(0, 10)] int armyDepth = 2;
@@ -13,16 +13,17 @@ public class ArmyHandler : FormationHandler
     [SerializeField] [Range(0, 1)] float noise = 0f;
     [SerializeField] bool hollow = false;
     [SerializeField] bool squareFormBool = true;
-    
+    [SerializeField] bool wedgeFormBool = false;
+
     float Offset = 0f;
-    
-    public GameObject formationPrefab;
+
+    public UnityEngine.GameObject formationPrefab;
 
     public List<GameObject> spawnedFormations = new List<GameObject>();
     public List<Vector3> formationPositions = new List<Vector3>();
 
     public List<Transform> waypoints;
-    
+
     private void Update()
     {
         SetupArmy();
@@ -31,21 +32,25 @@ public class ArmyHandler : FormationHandler
     {
         if (squareFormBool)
             formationPositions = SquareFormation().ToList();
-        else
+        else if (wedgeFormBool)
             formationPositions = WedgeFormation().ToList();
 
-        if(formationPositions.Count > spawnedFormations.Count)
+        if (formationPositions.Count > spawnedFormations.Count)
         {
             var remainingPositions = formationPositions.Skip(spawnedFormations.Count);
             SpawnFormation(remainingPositions);
         }
-        if(formationPositions.Count < spawnedFormations.Count)
+        if (formationPositions.Count < spawnedFormations.Count)
         {
             KillFormation(spawnedFormations.Count - formationPositions.Count);
         }
         for (int i = 0; i < formationPositions.Count; i++)
         {
-            spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 5f * Time.deltaTime);
+            var formHandler = spawnedFormations[i].GetComponent<FormationHandler>();
+            formHandler.SetUnitPositions(formationPositions[i]);
+
+            spawnedFormations[i].transform.position = Vector3.Lerp(spawnedFormations[i].transform.position, formationPositions[i], 20f);
+            spawnedFormations[i].transform.position = spawnedFormations[i].transform.position.normalized;
         }
     }
     public void MoveArmy(Transform point)
@@ -82,7 +87,7 @@ public class ArmyHandler : FormationHandler
             for (int j = 0; j < armyDepth; j++)
             {
                 if (hollow && i != 0 && i < armyWidth - 1 && j != 0 && j < armyDepth - 1) continue;
-                
+
                 var pos = new Vector3(i, 0, j) * Spread;
 
                 pos += GetArmyNoise(pos);
@@ -121,6 +126,13 @@ public class ArmyHandler : FormationHandler
     {
         return formationPositions;
     }
+    public void SetFormationPosition(Transform trans)
+    {
+        for (int i = 0; i < formationPositions.Count; i++)
+        {
+            formationPositions[i] += trans.position;
+        }
+    }
     public Vector3 GetArmyNoise(Vector3 pos)
     {
         var pNoise = Mathf.PerlinNoise(pos.x * noise, pos.z * noise);
@@ -129,9 +141,9 @@ public class ArmyHandler : FormationHandler
     }
     private void OnDrawGizmos()
     {
-        for(int i = 0; i < formationPositions.Count; i++)
+        for (int i = 0; i < formationPositions.Count; i++)
         {
-            Gizmos.DrawCube(formationPositions[i], Vector3.one);
+            Gizmos.DrawWireCube(formationPositions[i], Vector3.one);
         }
     }
 }

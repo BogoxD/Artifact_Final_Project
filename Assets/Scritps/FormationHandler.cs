@@ -12,8 +12,12 @@ public class FormationHandler : MonoBehaviour
     [SerializeField] bool move2 = false;
     [SerializeField] bool move3 = false;
     [SerializeField] float avarageSpeed;
-    [SerializeField] List<float> distancesFromUnitsToPoints;
-    [SerializeField] int fartherestUnitIndex;
+    [SerializeField] private GameObject unitPrefab;
+    private Vector3 formationPoint;
+
+    public List<float> distancesFromUnitsToPoints;
+    [SerializeField] private int fartherestUnitIndex;
+    [SerializeField] private bool hasDestinationReached;
     private Vector3 centerOfMass = new();
 
     public BaseFormation Formation
@@ -27,15 +31,17 @@ public class FormationHandler : MonoBehaviour
         set => formation = value;
     }
 
-    [SerializeField] private GameObject unitPrefab;
-
-    public List<Unit> spawnedUnits = new List<Unit>();
-    public List<Vector3> unitPositions = new List<Vector3>();
+    private ArmyHandler parentArmy;
+    [HideInInspector] public List<Unit> spawnedUnits = new List<Unit>();
+    [HideInInspector] public List<Vector3> unitPositions = new List<Vector3>();
     public GameObject[] movingPoints;
 
     private void Start()
     {
         movingPoints = GameObject.FindGameObjectsWithTag("Waypoint");
+
+        if(transform.parent)
+           parentArmy = transform.parent.GetComponent<ArmyHandler>();
     }
     void Update()
     {
@@ -57,12 +63,6 @@ public class FormationHandler : MonoBehaviour
         {
             MoveUnits(movingPoints[2].transform);
         }
-        if (transform.parent)
-        {
-            move1 = transform.parent.GetComponent<ArmyHandler>().move1;
-            move2 = transform.parent.GetComponent<ArmyHandler>().move2;
-            move3 = transform.parent.GetComponent<ArmyHandler>().move3;
-        }
 
         if (distancesFromUnitsToPoints.Count > 0)
             fartherestUnitIndex = FindFarUnitIndex();
@@ -71,7 +71,7 @@ public class FormationHandler : MonoBehaviour
     }
     void SetUpFormation()
     {
-        unitPositions = Formation.EvaluatePositions().ToList();
+        unitPositions = Formation.EvaluatePositions(formationPoint).ToList();
 
         //add units to formation
         if (unitPositions.Count > spawnedUnits.Count)
@@ -90,21 +90,19 @@ public class FormationHandler : MonoBehaviour
             NavMeshAgent agentTmp = spawnedUnits[i].GetNavMeshAgent();
             agentTmp.SetDestination(unitPositions[i]);
 
-            transform.rotation = Quaternion.LookRotation(transform.forward);
-
             //the fartherst unit
-            if(i == fartherestUnitIndex)
+            if (i == fartherestUnitIndex)
             {
-                agentTmp.acceleration = 11f;
+                agentTmp.acceleration = 12f;
                 agentTmp.speed = 5f;
             }
             else
             {
-                //slow down other units by clamping their speed from 0 to avarge speed of formation
-                Mathf.Clamp(agentTmp.speed, 0, avarageSpeed);
-                agentTmp.speed = 3.5f;
+                agentTmp.speed = 2f;
                 agentTmp.acceleration = 8f;
             }
+
+            hasDestinationReached = HasReachedDestination(spawnedUnits);
         }
     }
     public void MoveUnits(Transform point)
@@ -112,7 +110,15 @@ public class FormationHandler : MonoBehaviour
         for (int i = 0; i < spawnedUnits.Count; i++)
         {
             unitPositions[i] += point.position;
-            spawnedUnits[i].GetComponent<NavMeshAgent>().SetDestination(unitPositions[i]);
+            NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
+            agent.SetDestination(unitPositions[i]);
+        }
+    }
+    public void SetUnitPositions(Vector3 point)
+    {
+        for (int i = 0; i < unitPositions.Count; i++)
+        {
+            formationPoint = point;
         }
     }
     float ReturnAvarageSpeed(List<Unit> spawnedUnits)
@@ -153,7 +159,7 @@ public class FormationHandler : MonoBehaviour
         }
         return index;
     }
-    public Vector3 FindCenterOfMass(List<Unit> spawnedUnits)
+    Vector3 FindCenterOfMass(List<Unit> spawnedUnits)
     {
         var totalX = 0f;
         var totalZ = 0f;
@@ -167,14 +173,47 @@ public class FormationHandler : MonoBehaviour
 
         return new Vector3(centerX, 0, centerZ);
     }
+    IEnumerator RigidbodyKinematicOnSpawn(Unit unit)
+    {
+        unit.rb.isKinematic = true;
 
+        yield return new WaitForSeconds(3f);
+
+        unit.rb.isKinematic = false;
+    }
+    bool HasReachedDestination(List<Unit> spawnedUnits)
+    {
+        int j = 0;
+
+        for (int i = 0; i < spawnedUnits.Count; i++)
+        {
+            NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
+
+            if(!agent.pathPending)
+            {
+                if(agent.remainingDistance <= agent.stoppingDistance)
+                {
+                    if(!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                    {
+                        j++;
+                    }
+                }
+            }
+        }
+        if (j == spawnedUnits.Count)
+            return true;
+        else
+            return false;
+    }
     void Spawn(IEnumerable<Vector3> positions)
     {
         foreach (Vector3 pos in positions)
         {
             var unit = Instantiate(unitPrefab, pos, Quaternion.identity, transform);
             spawnedUnits.Add(unit.GetComponent<Unit>());
+            StartCoroutine(RigidbodyKinematicOnSpawn(unit.GetComponent<Unit>()));
         }
+        StopCoroutine("RigidbodyKinematicOnSpawn");
     }
     void Kill(int num)
     {

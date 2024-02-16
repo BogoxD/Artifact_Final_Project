@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class BoxFormation : BaseFormation
 {
-    [SerializeField][Range(0,20)] int width = 3;
-    [SerializeField][Range(0,20)] int depth = 3;
+    [SerializeField] [Range(0, 20)] int width = 3;
+    [SerializeField] [Range(0, 20)] int depth = 3;
     [SerializeField] bool hollow = false;
-    
-    public override IEnumerable<Vector3> EvaluatePositions()
+
+    public override IEnumerable<Vector3> EvaluatePositions(Vector3 formationPoint)
     {
         Vector3 middleOffset = new Vector3(width * 0.5f, 0, depth * 0.5f);
 
@@ -22,15 +22,16 @@ public class BoxFormation : BaseFormation
                 var pos = new Vector3(i, 0, j) * Spread;
 
                 pos -= middleOffset;
-
+                pos += Vector3.Lerp(pos, formationPoint, 5f);
                 pos += Get2DNoise(pos);
 
                 pos += transform.position;
+
 
                 yield return pos;
 
             }
         }
     }
-   
+
 }

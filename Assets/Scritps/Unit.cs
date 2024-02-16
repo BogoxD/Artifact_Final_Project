@@ -25,9 +25,8 @@ public class Unit : MonoBehaviour
     {
         velocity = navAgent.velocity;
         magnitude = navAgent.velocity.magnitude;
-
         
-        if(magnitude <= 0)
+        if(velocity.x <= 0 && velocity.z <= 0)
         {
             transform.rotation = Quaternion.Lerp(transform.rotation, transform.parent.rotation, Time.deltaTime);
         }

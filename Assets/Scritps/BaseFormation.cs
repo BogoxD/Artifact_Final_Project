@@ -6,7 +6,7 @@ public abstract class BaseFormation : MonoBehaviour
 {
     [SerializeField] [Range(2, 4)] protected float Spread = 2f;
     [SerializeField] [Range(0, 1)] float noise = 0;
-    public abstract IEnumerable<Vector3> EvaluatePositions();
+    public abstract IEnumerable<Vector3> EvaluatePositions(Vector3 offset);
 
     public Vector3 Get2DNoise(Vector3 pos)
     {

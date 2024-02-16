@@ -10,7 +10,7 @@ public class RadialFormation : BaseFormation
     [SerializeField][Range(1,5)] private int rings = 1;
     [SerializeField] private float Offset = 0f;
 
-    public override IEnumerable<Vector3> EvaluatePositions()
+    public override IEnumerable<Vector3> EvaluatePositions(Vector3 formationPoint)
     {
         var ammountPerRing = ammount / rings;
 
