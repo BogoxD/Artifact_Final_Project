@@ -49,7 +49,8 @@ public class ArmyHandler : MonoBehaviour
             var formHandler = spawnedFormations[i].GetComponent<FormationHandler>();
             formHandler.SetUnitPositions(formationPositions[i]);
 
-            spawnedFormations[i].transform.position = Vector3.Lerp(spawnedFormations[i].transform.position, formationPositions[i], 20f);
+            formationPositions[i] = formHandler.FindCenterOfMass(formHandler.spawnedUnits);
+            spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 0f).normalized;
             spawnedFormations[i].transform.position = spawnedFormations[i].transform.position.normalized;
         }
     }
@@ -63,9 +64,9 @@ public class ArmyHandler : MonoBehaviour
     }
     void SpawnFormation(IEnumerable<Vector3> positions)
     {
-        foreach (Vector3 pos in positions)
+        for(int i = 0; i < positions.Count(); i++)
         {
-            var unit = Instantiate(formationPrefab, pos, Quaternion.identity, transform);
+            var unit = Instantiate(formationPrefab, positions.ToList()[i] + formationPositions[i], Quaternion.identity, transform);
             spawnedFormations.Add(unit);
         }
     }

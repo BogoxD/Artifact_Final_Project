@@ -26,6 +26,8 @@ public class WedgeFormation : BaseFormation
 
                 pos += Get2DNoise(pos);
 
+                pos += Vector3.Lerp(pos, formationPoint, 5f);
+
                 pos += transform.position;
 
                 yield return pos;

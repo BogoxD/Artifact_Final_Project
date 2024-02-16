@@ -28,6 +28,8 @@ public class RadialFormation : BaseFormation
                 pos += Get2DNoise(pos);
 
                 pos *= Spread;
+ 
+                pos += Vector3.Lerp(pos, formationPoint, 5f);
 
                 pos += transform.position;
 

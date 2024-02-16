@@ -21,8 +21,10 @@ public class BoxFormation : BaseFormation
 
                 var pos = new Vector3(i, 0, j) * Spread;
 
-                pos -= middleOffset;
                 pos += Vector3.Lerp(pos, formationPoint, 5f);
+
+                pos -= middleOffset;
+
                 pos += Get2DNoise(pos);
 
                 pos += transform.position;

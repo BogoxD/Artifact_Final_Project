@@ -94,11 +94,11 @@ public class FormationHandler : MonoBehaviour
             if (i == fartherestUnitIndex)
             {
                 agentTmp.acceleration = 12f;
-                agentTmp.speed = 5f;
+                agentTmp.speed = 6f;
             }
             else
             {
-                agentTmp.speed = 2f;
+                agentTmp.speed = 3f;
                 agentTmp.acceleration = 8f;
             }
 
@@ -159,7 +159,7 @@ public class FormationHandler : MonoBehaviour
         }
         return index;
     }
-    Vector3 FindCenterOfMass(List<Unit> spawnedUnits)
+    public Vector3 FindCenterOfMass(List<Unit> spawnedUnits)
     {
         var totalX = 0f;
         var totalZ = 0f;
@@ -175,11 +175,14 @@ public class FormationHandler : MonoBehaviour
     }
     IEnumerator RigidbodyKinematicOnSpawn(Unit unit)
     {
-        unit.rb.isKinematic = true;
+        if (unit.rb)
+        {
+            unit.rb.isKinematic = true;
 
-        yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(3f);
 
-        unit.rb.isKinematic = false;
+            unit.rb.isKinematic = false;
+        }
     }
     bool HasReachedDestination(List<Unit> spawnedUnits)
     {
@@ -211,9 +214,7 @@ public class FormationHandler : MonoBehaviour
         {
             var unit = Instantiate(unitPrefab, pos, Quaternion.identity, transform);
             spawnedUnits.Add(unit.GetComponent<Unit>());
-            StartCoroutine(RigidbodyKinematicOnSpawn(unit.GetComponent<Unit>()));
         }
-        StopCoroutine("RigidbodyKinematicOnSpawn");
     }
     void Kill(int num)
     {
