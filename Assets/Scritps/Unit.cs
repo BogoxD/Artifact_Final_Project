@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using UnityEngine.AI;
-using System;
 
 public class Unit : MonoBehaviour
 {
     private NavMeshAgent navAgent;
+    [SerializeField] public int maxHealth = 100;
+    private int currentHealth;
     [HideInInspector] public Rigidbody rb;
 
     [Header("Nav Agent Parameters")]
@@ -17,6 +17,7 @@ public class Unit : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        currentHealth = maxHealth;
     }
 
     public NavMeshAgent GetNavMeshAgent()
@@ -27,6 +28,11 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
+        if(currentHealth <= 0)
+        {
+            gameObject.SetActive(false);
+        }
+
         if (navAgent)
         {
             velocity = navAgent.velocity;

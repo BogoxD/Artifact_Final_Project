@@ -65,7 +65,6 @@ public class FieldOfView : MonoBehaviour
 
     }
 
-    //find closest target
     Collider FindClosestTarget(Collider[] enemyTargets)
     {
         Collider closestTarget = new Collider();
