@@ -21,6 +21,7 @@ public class ArmyHandler : MonoBehaviour
 
     public List<GameObject> spawnedFormations = new List<GameObject>();
     public List<Vector3> formationPositions = new List<Vector3>();
+    public List<Vector3> initialPositions = new List<Vector3>();
 
     public List<Transform> waypoints;
 
