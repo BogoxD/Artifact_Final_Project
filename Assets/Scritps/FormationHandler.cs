@@ -18,6 +18,7 @@ public class FormationHandler : MonoBehaviour
     public List<float> distancesFromUnitsToPoints;
     [SerializeField] private int fartherestUnitIndex;
     [SerializeField] private bool hasDestinationReached;
+    private bool isFighting;
     private Vector3 centerOfMass = new();
 
     public BaseFormation Formation
@@ -88,21 +89,31 @@ public class FormationHandler : MonoBehaviour
         for (int i = 0; i < spawnedUnits.Count; i++)
         {
             NavMeshAgent agentTmp = spawnedUnits[i].GetNavMeshAgent();
-            agentTmp.SetDestination(unitPositions[i]);
+            isFighting = agentTmp.GetComponent<FieldOfView>().canSeeEnemy;
 
-            //the fartherst unit
-            if (i == fartherestUnitIndex)
-            {
-                agentTmp.acceleration = 12f;
-                agentTmp.speed = 6f;
-            }
-            else
-            {
-                agentTmp.speed = 3f;
-                agentTmp.acceleration = 8f;
-            }
 
-            hasDestinationReached = HasReachedDestination(spawnedUnits);
+            if (agentTmp.enabled)
+            {
+                agentTmp.SetDestination(unitPositions[i]);
+                //the fartherst unit
+                if (i == fartherestUnitIndex)
+                {
+                    agentTmp.acceleration = 12f;
+                    agentTmp.speed = 6f;
+                }
+                else
+                {
+                    agentTmp.speed = 3f;
+                    agentTmp.acceleration = 8f;
+                }
+                if (isFighting && 
+                    agentTmp.GetComponent<FieldOfView>().closestTarget)
+                {
+                    agentTmp.SetDestination(agentTmp.GetComponent<FieldOfView>().closestTarget.transform.position);
+                }
+
+            }
+            //hasDestinationReached = HasReachedDestination(spawnedUnits);
         }
     }
     public void MoveUnits(Transform point)

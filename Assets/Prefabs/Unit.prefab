@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: eca14f57382ee714a9da444b52e0cb17, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -103,7 +103,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 2.96
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 3
@@ -155,9 +155,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63801847e7413794f980dcd04d4f135e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 100
   rb: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
   magnitude: 0
+  enemy:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &5584294164875460625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,8 +174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75ea0355247df674899d83cf1c3a15cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radiusFov: 8
-  angleFov: 90
+  radiusFov: 20
+  angleFov: 110
   targetMask:
     serializedVersion: 2
     m_Bits: 64
@@ -180,6 +184,7 @@ MonoBehaviour:
     m_Bits: 256
   canSeeEnemy: 0
   enemyTargets: []
+  closestTarget: {fileID: 0}
 --- !u!1001 &2342313633072210915
 PrefabInstance:
   m_ObjectHideFlags: 0

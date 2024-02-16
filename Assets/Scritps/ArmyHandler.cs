@@ -96,6 +96,8 @@ public class ArmyHandler : MonoBehaviour
 
                 pos -= middleOffset;
 
+                pos += transform.position;
+
                 yield return pos;
 
             }
@@ -119,6 +121,8 @@ public class ArmyHandler : MonoBehaviour
                 pos += GetArmyNoise(pos);
 
                 pos *= Spread;
+
+                pos += transform.position;
 
                 yield return pos;
             }

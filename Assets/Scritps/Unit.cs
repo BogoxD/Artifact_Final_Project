@@ -13,6 +13,7 @@ public class Unit : MonoBehaviour
     [Header("Nav Agent Parameters")]
     [SerializeField] public Vector3 velocity;
     [SerializeField] public float magnitude;
+    [SerializeField] public LayerMask enemy;
 
     private void Awake()
     {
@@ -30,7 +31,8 @@ public class Unit : MonoBehaviour
     {
         if(currentHealth <= 0)
         {
-            gameObject.SetActive(false);
+            navAgent.enabled = false;
+            navAgent.gameObject.SetActive(false);   
         }
 
         if (navAgent)
@@ -53,5 +55,22 @@ public class Unit : MonoBehaviour
                 navAgent.avoidancePriority = 90;
             }
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.layer == 7)
+        {
+            DamageUnit(Random.Range(0,50), collision.gameObject.GetComponent<Unit>());
+        }
+        else if(collision.gameObject.layer == 6)
+        {
+            DamageUnit(Random.Range(0, 50), collision.gameObject.GetComponent<Unit>());
+        }
+    }
+
+    private void DamageUnit(int ammount, Unit unit)
+    {
+        unit.currentHealth -= ammount;
     }
 }

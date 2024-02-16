@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class FieldOfView : MonoBehaviour
 {
@@ -52,6 +53,10 @@ public class FieldOfView : MonoBehaviour
                     {
                         canSeeEnemy = true;
                         closestTarget = FindClosestTarget(enemyTargets);
+                        if(enemyTargets.Length == 1)
+                        {
+                            closestTarget = enemyTargets[0];
+                        }
                     }
                     else
                         canSeeEnemy = false;
@@ -72,7 +77,6 @@ public class FieldOfView : MonoBehaviour
 
         for (int i = 1; i < enemyTargets.Length; i++)
         {
-
             if (Vector3.Distance(transform.position, enemyTargets[i].transform.position) < 
                 Vector3.Distance(transform.position, closestPos))
             {
