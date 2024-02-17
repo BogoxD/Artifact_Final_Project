@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8889351753580995233}
   - component: {fileID: 4112564386943446156}
   - component: {fileID: 7992149203106614223}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TriggerCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -217,7 +217,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  currentHealth: 0
   rb: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
   magnitude: 0
@@ -264,6 +263,7 @@ MonoBehaviour:
   firePoint: {fileID: 1097075746684859633}
   throwForce: 15
   throwUpwardForce: 8
+  isThrowing: 0
 --- !u!1 &5697546386140397818
 GameObject:
   m_ObjectHideFlags: 0

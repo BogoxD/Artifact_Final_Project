@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7760418589749872972}
   - component: {fileID: 1883373522839419246}
   - component: {fileID: 9209195908544272862}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TriggerCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -215,6 +215,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  minAttackDamage: 0
+  maxAttackDamage: 15
   rb: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
   magnitude: 0

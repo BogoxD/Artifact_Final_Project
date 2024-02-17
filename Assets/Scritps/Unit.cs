@@ -6,8 +6,12 @@ using UnityEngine.AI;
 public class Unit : MonoBehaviour
 {
     private NavMeshAgent navAgent;
+    [Header("Combat System")]
     [SerializeField] public int maxHealth = 100;
     private int currentHealth;
+    [SerializeField] private int minAttackDamage;
+    [SerializeField] private int maxAttackDamage;
+
     [HideInInspector] public Rigidbody rb;
 
     [Header("Nav Agent Parameters")]
@@ -65,11 +69,11 @@ public class Unit : MonoBehaviour
     {
         if(collision.gameObject.layer == 7)
         {
-            DamageUnit(Random.Range(0,10), collision.gameObject.GetComponent<Unit>());
+            DamageUnit(Random.Range(minAttackDamage, maxAttackDamage), collision.gameObject.GetComponent<Unit>());
         }
         else if(collision.gameObject.layer == 6)
         {
-            DamageUnit(Random.Range(0, 10), collision.gameObject.GetComponent<Unit>());
+            DamageUnit(Random.Range(minAttackDamage, maxAttackDamage), collision.gameObject.GetComponent<Unit>());
         }
     }
     public void DamageUnit(int ammount, Unit unit)
