@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Waypoint
+  - Skirmisher
+  - Heavy_Infantry
+  - Spear
   layers:
   - Default
   - TransparentFX

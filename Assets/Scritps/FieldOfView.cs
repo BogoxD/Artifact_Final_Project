@@ -17,6 +17,7 @@ public class FieldOfView : MonoBehaviour
 
     public Collider[] enemyTargets;
     public Collider closestTarget;
+    private bool once = true;
 
     private void Start()
     {
@@ -52,11 +53,24 @@ public class FieldOfView : MonoBehaviour
                     if (!Physics.Raycast(transform.position, directonToTarget, distanceToTarget, obstructionMask))
                     {
                         canSeeEnemy = true;
-                        closestTarget = FindClosestTarget(enemyTargets);
-                        if(enemyTargets.Length == 1)
+                        if (once)
                         {
-                            closestTarget = enemyTargets[0];
+                            closestTarget = FindClosestTarget(enemyTargets);
+                            once = false; 
                         }
+                        if (closestTarget)
+                        {
+                            if (closestTarget.GetComponent<Unit>().GetCurrentHealth() <= 0)
+                            {
+                                once = true;
+                            }
+                            else if (enemyTargets.Length == 1)
+                            {
+                                closestTarget = enemyTargets[0];
+                            }
+                        }
+                        else
+                            closestTarget = FindClosestTarget(enemyTargets);
                     }
                     else
                         canSeeEnemy = false;
@@ -69,7 +83,10 @@ public class FieldOfView : MonoBehaviour
             canSeeEnemy = false;
 
     }
-
+    IEnumerator Wait(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+    }
     Collider FindClosestTarget(Collider[] enemyTargets)
     {
         Collider closestTarget = new Collider();
@@ -77,7 +94,7 @@ public class FieldOfView : MonoBehaviour
 
         for (int i = 1; i < enemyTargets.Length; i++)
         {
-            if (Vector3.Distance(transform.position, enemyTargets[i].transform.position) < 
+            if (Vector3.Distance(transform.position, enemyTargets[i].transform.position) > 
                 Vector3.Distance(transform.position, closestPos))
             {
                 closestTarget = enemyTargets[i];
@@ -85,5 +102,10 @@ public class FieldOfView : MonoBehaviour
         }
 
         return closestTarget;
+    }
+    Collider PickRandomTarget(Collider[] enemyTargets)
+    {
+        int randVal = Random.Range(0, enemyTargets.Length);
+        return enemyTargets[randVal];
     }
 }

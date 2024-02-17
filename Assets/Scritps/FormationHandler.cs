@@ -94,7 +94,9 @@ public class FormationHandler : MonoBehaviour
 
             if (agentTmp.enabled)
             {
-                agentTmp.SetDestination(unitPositions[i]);
+                if(!isFighting)
+                   agentTmp.SetDestination(unitPositions[i]);
+
                 //the fartherst unit
                 if (i == fartherestUnitIndex)
                 {
@@ -106,8 +108,7 @@ public class FormationHandler : MonoBehaviour
                     agentTmp.speed = 3f;
                     agentTmp.acceleration = 8f;
                 }
-                if (isFighting && 
-                    agentTmp.GetComponent<FieldOfView>().closestTarget)
+                if (isFighting && agentTmp.GetComponent<FieldOfView>().closestTarget && agentTmp.tag != "Skirmisher")
                 {
                     agentTmp.SetDestination(agentTmp.GetComponent<FieldOfView>().closestTarget.transform.position);
                 }

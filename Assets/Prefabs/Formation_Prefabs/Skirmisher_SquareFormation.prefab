@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &1740786272623024852
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3622917723177107170, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_ProbeAnchor
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 44.85224
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.9999995
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -26.038275
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624924, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624925, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 3316376772576343486, guid: e5fd788adcff1c8499c8d0539c0772b7, type: 3}
+    - target: {fileID: 5015159480054624926, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: m_Name
+      value: SquareFormation_Skirmisher
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}

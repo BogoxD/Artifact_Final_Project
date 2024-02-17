@@ -14,6 +14,7 @@ public class Unit : MonoBehaviour
     [SerializeField] public Vector3 velocity;
     [SerializeField] public float magnitude;
     [SerializeField] public LayerMask enemy;
+    [SerializeField] BoxCollider triggerCheck;
 
     private void Awake()
     {
@@ -32,7 +33,10 @@ public class Unit : MonoBehaviour
         if(currentHealth <= 0)
         {
             navAgent.enabled = false;
-            navAgent.gameObject.SetActive(false);   
+            navAgent.gameObject.SetActive(false);
+
+            if(navAgent.tag == "Skirmisher")
+               navAgent.GetComponent<ThrowObject>().enabled = false;
         }
 
         if (navAgent)
@@ -61,16 +65,19 @@ public class Unit : MonoBehaviour
     {
         if(collision.gameObject.layer == 7)
         {
-            DamageUnit(Random.Range(0,50), collision.gameObject.GetComponent<Unit>());
+            DamageUnit(Random.Range(0,10), collision.gameObject.GetComponent<Unit>());
         }
         else if(collision.gameObject.layer == 6)
         {
-            DamageUnit(Random.Range(0, 50), collision.gameObject.GetComponent<Unit>());
+            DamageUnit(Random.Range(0, 10), collision.gameObject.GetComponent<Unit>());
         }
     }
-
-    private void DamageUnit(int ammount, Unit unit)
+    public void DamageUnit(int ammount, Unit unit)
     {
         unit.currentHealth -= ammount;
+    }
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
     }
 }
