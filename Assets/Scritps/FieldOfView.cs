@@ -25,7 +25,7 @@ public class FieldOfView : MonoBehaviour
     }
     private IEnumerator FOVRoutine()
     {
-        WaitForSeconds wait = new WaitForSeconds(0.2f);
+        WaitForSeconds wait = new WaitForSeconds(1f);
 
         while (true)
         {
@@ -64,13 +64,14 @@ public class FieldOfView : MonoBehaviour
                             {
                                 once = true;
                             }
-                            else if (enemyTargets.Length == 1)
-                            {
-                                closestTarget = enemyTargets[0];
-                            }
                         }
                         else
                             closestTarget = FindClosestTarget(enemyTargets);
+                        
+                        if (enemyTargets.Length <= 1)
+                        {
+                            closestTarget = enemyTargets[0];
+                        }
                     }
                     else
                         canSeeEnemy = false;
@@ -82,10 +83,6 @@ public class FieldOfView : MonoBehaviour
         else if (canSeeEnemy)
             canSeeEnemy = false;
 
-    }
-    IEnumerator Wait(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
     }
     Collider FindClosestTarget(Collider[] enemyTargets)
     {

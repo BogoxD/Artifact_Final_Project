@@ -13,7 +13,7 @@ public class TriggerCheckScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "Spear")
+        if(other.gameObject.tag != unit.gameObject.tag)
         {
             unit.DamageUnit(Random.Range(20, 30), unit);
         }

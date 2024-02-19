@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 5584294164875460625}
   m_Layer: 7
   m_Name: Unit
-  m_TagString: Heavy_Infantry
+  m_TagString: TeamBlue
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75ea0355247df674899d83cf1c3a15cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radiusFov: 20
+  radiusFov: 40
   angleFov: 300
   targetMask:
     serializedVersion: 2

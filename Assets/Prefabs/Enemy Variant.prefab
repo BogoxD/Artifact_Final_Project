@@ -27,6 +27,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 4078945737046587363, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
+      propertyPath: m_TagString
+      value: TeamRed
+      objectReference: {fileID: 0}
     - target: {fileID: 4078945737046587367, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
       propertyPath: m_RootOrder
       value: 0

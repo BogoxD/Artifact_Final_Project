@@ -67,10 +67,12 @@ public class Unit : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        //enemy collides with friendly
         if(collision.gameObject.layer == 7)
         {
             DamageUnit(Random.Range(minAttackDamage, maxAttackDamage), collision.gameObject.GetComponent<Unit>());
         }
+        //friendly collides with enemy
         else if(collision.gameObject.layer == 6)
         {
             DamageUnit(Random.Range(minAttackDamage, maxAttackDamage), collision.gameObject.GetComponent<Unit>());

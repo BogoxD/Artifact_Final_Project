@@ -6,7 +6,8 @@ TagManager:
   tags:
   - Waypoint
   - Skirmisher
-  - Heavy_Infantry
+  - TeamBlue
+  - TeamRed
   - Spear
   layers:
   - Default

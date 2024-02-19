@@ -108,11 +108,10 @@ public class FormationHandler : MonoBehaviour
                     agentTmp.speed = 3f;
                     agentTmp.acceleration = 8f;
                 }
-                if (isFighting && agentTmp.GetComponent<FieldOfView>().closestTarget && agentTmp.tag != "Skirmisher")
+                if (isFighting && !agentTmp.GetComponent<ThrowObject>() && agentTmp.GetComponent<FieldOfView>().closestTarget)
                 {
                     agentTmp.SetDestination(agentTmp.GetComponent<FieldOfView>().closestTarget.transform.position);
                 }
-
             }
             //hasDestinationReached = HasReachedDestination(spawnedUnits);
         }
@@ -225,6 +224,7 @@ public class FormationHandler : MonoBehaviour
         foreach (Vector3 pos in positions)
         {
             var unit = Instantiate(unitPrefab, pos, Quaternion.identity, transform);
+            unit.transform.forward = gameObject.transform.forward;
             spawnedUnits.Add(unit.GetComponent<Unit>());
         }
     }
