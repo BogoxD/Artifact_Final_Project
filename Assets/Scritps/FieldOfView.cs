@@ -27,7 +27,7 @@ public class FieldOfView : MonoBehaviour
     {
         WaitForSeconds wait = new WaitForSeconds(1f);
 
-        while (true)
+        for (; ; )
         {
             yield return wait;
             FieldOfViewCheck();
@@ -50,13 +50,17 @@ public class FieldOfView : MonoBehaviour
                 {
                     float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
-                    if (!Physics.Raycast(transform.position, directonToTarget, distanceToTarget, obstructionMask))
+                    if (Physics.Raycast(transform.position, directonToTarget, distanceToTarget, obstructionMask))
+                    {
+                        canSeeEnemy = false;
+                    }
+                    else
                     {
                         canSeeEnemy = true;
                         if (once)
                         {
                             closestTarget = FindClosestTarget(enemyTargets);
-                            once = false; 
+                            once = false;
                         }
                         if (closestTarget)
                         {
@@ -67,14 +71,12 @@ public class FieldOfView : MonoBehaviour
                         }
                         else
                             closestTarget = FindClosestTarget(enemyTargets);
-                        
+
                         if (enemyTargets.Length <= 1)
                         {
                             closestTarget = enemyTargets[0];
                         }
                     }
-                    else
-                        canSeeEnemy = false;
                 }
                 else
                     canSeeEnemy = false;
