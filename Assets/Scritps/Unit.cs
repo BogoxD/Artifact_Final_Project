@@ -65,7 +65,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    /*private void OnCollisionEnter(Collision collision)
     {
         //enemy collides with friendly
         if(collision.gameObject.layer == 7)
@@ -77,7 +77,7 @@ public class Unit : MonoBehaviour
         {
             DamageUnit(Random.Range(minAttackDamage, maxAttackDamage), collision.gameObject.GetComponent<Unit>());
         }
-    }
+    }*/
     public void DamageUnit(int ammount, Unit unit)
     {
         unit.currentHealth -= ammount;
