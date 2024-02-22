@@ -113,7 +113,7 @@ public class FormationHandler : MonoBehaviour
                     agentTmp.SetDestination(agentTmp.GetComponent<FieldOfView>().closestTarget.transform.position);
                 }
             }
-            //hasDestinationReached = HasReachedDestination(spawnedUnits);
+            hasDestinationReached = HasReachedDestination(spawnedUnits);
         }
     }
     public void MoveUnits(Transform point)
@@ -122,6 +122,7 @@ public class FormationHandler : MonoBehaviour
         {
             unitPositions[i] += point.position;
             NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
+            
             agent.SetDestination(unitPositions[i]);
         }
     }
