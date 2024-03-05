@@ -38,6 +38,9 @@ public class FormationHandler : MonoBehaviour
     public Transform c2T;
     public Transform c1T;
 
+    public int sideStart = 0;
+    public int sideEnd = 0;
+
     public BaseFormation Formation
     {
         get
@@ -94,8 +97,13 @@ public class FormationHandler : MonoBehaviour
             targetPosition = centerOfMass;
             targetDir = GetFormationDirection();
         }
+        //find the furtherst unit from formation position 
         if (distancesFromUnitsToPoints.Count > 0)
             fartherestUnitIndex = FindFarUnitIndex();
+
+        //formationTrans is used for calculating the steering path with circles
+        if (hasDestinationReached)
+            formationTrans.position = centerOfMass;
 
         hasDestinationReached = HasReachedDestination(spawnedUnits);
         distancesFromUnitsToPoints = CalculateDistanceFromUnitToPoint(spawnedUnits, unitPositions);
@@ -146,8 +154,6 @@ public class FormationHandler : MonoBehaviour
     }
     public void MoveUnits(Transform point)
     {
-        //formationTrans.position = centerOfMass;
-
         //calculate steering path when moving
         CalculateSteeringPath(formationTrans.position, formationTrans.forward, targetPosition, targetDir, circleRadius);
 
@@ -239,7 +245,7 @@ public class FormationHandler : MonoBehaviour
 
             if (agent)
             {
-               if(agent.magnitude == 0)
+                if (agent.magnitude == 0)
                 {
                     j++;
                 }
@@ -286,31 +292,72 @@ public class FormationHandler : MonoBehaviour
     }
     private void CalculateSteeringPath(Vector3 currentPosition, Vector3 currentDirection, Vector3 targetPosition, Vector3 targetDirection, float circleRadius)
     {
-        Vector3 dirVec = targetPosition - currentPosition;
+        Vector3 dirVec = (targetPosition - currentPosition).normalized;
 
         //calculate first circle c1
-        Vector3 leftC1 = Vector3.Cross(dirVec, Vector3.up).normalized;
+        Vector3 leftC1 = Vector3.Cross(dirVec, Vector3.up);
         leftC1.z = circleRadius;
         c1 = leftC1 + currentPosition;
 
         //calculate second circle c2
-        Vector3 leftC2 = Vector3.Cross(-dirVec, Vector3.up).normalized;
+        Vector3 leftC2 = Vector3.Cross(-dirVec, Vector3.up);
         leftC2.z = circleRadius;
         c2 = leftC2 + targetPosition;
 
+        //debug
         c1T.position = c1;
         c2T.position = c2;
+
+        //if the circles overlap scale down the circles
+        var distance = Vector3.Distance(c2, c1);
+        if (distance < 2 * circleRadius)
+        {
+            leftC1 = Vector3.Scale(c1, -Vector3.one);
+            leftC2 = Vector3.Scale(c2, -Vector3.one);
+
+            c1 = currentPosition + leftC1 * circleRadius;
+            c2 = targetPosition + leftC2 * circleRadius;
+        }
+
+        // sideStart = 0;
+        //int sideEnd = 0;
+
+        if (leftC1 == RightPrep(currentDirection.normalized))
+            sideStart = 1;
+        else
+            sideStart = 0;
+        if (leftC2 == RightPrep(targetDirection.normalized))
+            sideEnd = 1;
+        else
+            sideEnd = 0;
+
+
+    }
+    
+    private Vector3 Perpendicular(Vector3 vector, Vector3 directionVector)
+    {
+        var result1 = new Vector3(-1 * vector.y, vector.x);
+        var result2 = new Vector3(vector.y, -1 * vector.x);
+
+        if (Vector3.Dot(vector, directionVector) >= 0)
+            return result1;
+        else
+            return result2;
     }
     private Vector3 RightPrep(Vector3 vector)
     {
-        var result1 = new Vector3(vector.z, 0, -1 * vector.x);
+        var result1 = new Vector3(vector.z, -1 * vector.x);
         return result1;
     }
     private Vector3 LeftPrep(Vector3 vector)
     {
-        var result1 = new Vector3(-1 * vector.z, 0, vector.x);
+        var result1 = new Vector3(-1 * vector.z, vector.x);
         return result1;
     }
+    //private Vector3 Perpendicular(Vector3 vec1, Vector3 directionVec)
+    //{
+
+    //}
     private void OnDrawGizmos()
     {
         for (int i = 0; i < unitPositions.Count; i++)
