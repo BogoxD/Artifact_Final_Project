@@ -7,19 +7,36 @@ using UnityEngine;
 public class FormationHandler : MonoBehaviour
 {
     private BaseFormation formation;
-
+    [Header("Steering")]
     [SerializeField] bool move1 = false;
     [SerializeField] bool move2 = false;
     [SerializeField] bool move3 = false;
     [SerializeField] float avarageSpeed;
+    [SerializeField] private bool hasDestinationReached;
+    [SerializeField] Transform formationTrans;
+    [SerializeField] float circleRadius;
+    // Centers of the two circles used for generating the path
+    Vector3 c1 = new();
+    Vector3 c2 = new();
+    // Angles where the path separates from c1, and where it joins c2
+    float c1_exitAngle = 0;
+    float c2_enterAngle = 0;
+
+    private Vector3 targetPosition;
+    private Vector3 targetDir;
+
+    private Vector3 centerOfMass = new();
+
+    [Header("Prefabs")]
     [SerializeField] private GameObject unitPrefab;
     private Vector3 formationPoint;
 
-    public List<float> distancesFromUnitsToPoints;
-    [SerializeField] private int fartherestUnitIndex;
-    [SerializeField] private bool hasDestinationReached;
+    [Header("Debug")]
+    [HideInInspector] public List<float> distancesFromUnitsToPoints;
+    private int fartherestUnitIndex;
     private bool isFighting;
-    private Vector3 centerOfMass = new();
+    public Transform c2T;
+    public Transform c1T;
 
     public BaseFormation Formation
     {
@@ -31,7 +48,6 @@ public class FormationHandler : MonoBehaviour
         }
         set => formation = value;
     }
-
     private ArmyHandler parentArmy;
     [HideInInspector] public List<Unit> spawnedUnits = new List<Unit>();
     [HideInInspector] public List<Vector3> unitPositions = new List<Vector3>();
@@ -41,39 +57,52 @@ public class FormationHandler : MonoBehaviour
     {
         movingPoints = GameObject.FindGameObjectsWithTag("Waypoint");
 
-        if(transform.parent)
-           parentArmy = transform.parent.GetComponent<ArmyHandler>();
+        if (transform.parent)
+            parentArmy = transform.parent.GetComponent<ArmyHandler>();
+
+        formationTrans.position = transform.position;
     }
     void Update()
     {
+        //Update formation
         SetUpFormation();
 
         avarageSpeed = ReturnAvarageSpeed(spawnedUnits);
-        
+        formationTrans.forward = GetFormationDirection();
         centerOfMass = FindCenterOfMass(spawnedUnits);
 
         if (move1 && movingPoints.Length > 0)
         {
             MoveUnits(movingPoints[0].transform);
+            targetPosition = movingPoints[0].transform.position;
+            targetDir = movingPoints[0].transform.forward;
         }
-        if (move2 && movingPoints.Length > 0)
+        else if (move2 && movingPoints.Length > 0)
         {
             MoveUnits(movingPoints[1].transform);
+            targetPosition = movingPoints[1].transform.position;
+            targetDir = movingPoints[1].transform.forward;
         }
-        if (move3 && movingPoints.Length > 0)
+        else if (move3 && movingPoints.Length > 0)
         {
             MoveUnits(movingPoints[2].transform);
+            targetPosition = movingPoints[2].transform.position;
+            targetDir = movingPoints[2].transform.forward;
         }
-
+        else
+        {
+            targetPosition = centerOfMass;
+            targetDir = GetFormationDirection();
+        }
         if (distancesFromUnitsToPoints.Count > 0)
             fartherestUnitIndex = FindFarUnitIndex();
 
+        hasDestinationReached = HasReachedDestination(spawnedUnits);
         distancesFromUnitsToPoints = CalculateDistanceFromUnitToPoint(spawnedUnits, unitPositions);
     }
     void SetUpFormation()
     {
         unitPositions = Formation.EvaluatePositions(formationPoint).ToList();
-
         //add units to formation
         if (unitPositions.Count > spawnedUnits.Count)
         {
@@ -91,11 +120,10 @@ public class FormationHandler : MonoBehaviour
             NavMeshAgent agentTmp = spawnedUnits[i].GetNavMeshAgent();
             isFighting = agentTmp.GetComponent<FieldOfView>().canSeeEnemy;
 
-
             if (agentTmp.enabled)
             {
-                if(!isFighting)
-                   agentTmp.SetDestination(unitPositions[i]);
+                if (!isFighting)
+                    agentTmp.SetDestination(unitPositions[i]);
 
                 //the fartherst unit
                 if (i == fartherestUnitIndex)
@@ -118,11 +146,16 @@ public class FormationHandler : MonoBehaviour
     }
     public void MoveUnits(Transform point)
     {
+        //formationTrans.position = centerOfMass;
+
+        //calculate steering path when moving
+        CalculateSteeringPath(formationTrans.position, formationTrans.forward, targetPosition, targetDir, circleRadius);
+
         for (int i = 0; i < spawnedUnits.Count; i++)
         {
             unitPositions[i] += point.position;
             NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
-            
+
             agent.SetDestination(unitPositions[i]);
         }
     }
@@ -175,7 +208,7 @@ public class FormationHandler : MonoBehaviour
     {
         var totalX = 0f;
         var totalZ = 0f;
-        foreach(Unit unit in spawnedUnits)
+        foreach (Unit unit in spawnedUnits)
         {
             totalX += unit.transform.position.x;
             totalZ += unit.transform.position.z;
@@ -202,16 +235,13 @@ public class FormationHandler : MonoBehaviour
 
         for (int i = 0; i < spawnedUnits.Count; i++)
         {
-            NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
+            Unit agent = spawnedUnits[i].GetComponent<Unit>();
 
-            if(!agent.pathPending)
+            if (agent)
             {
-                if(agent.remainingDistance <= agent.stoppingDistance)
+               if(agent.magnitude == 0)
                 {
-                    if(!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
-                    {
-                        j++;
-                    }
+                    j++;
                 }
             }
         }
@@ -238,6 +268,49 @@ public class FormationHandler : MonoBehaviour
             Destroy(unit.gameObject);
         }
     }
+
+    ////////////////////////////////////////////////////////////
+    //STEERING
+
+    private Vector3 GetFormationDirection()
+    {
+        Vector3 direction = new Vector3();
+
+        for (int i = 0; i < spawnedUnits.Count; i++)
+        {
+            direction += spawnedUnits[i].transform.forward;
+        }
+
+        direction /= spawnedUnits.Count;
+        return direction.normalized;
+    }
+    private void CalculateSteeringPath(Vector3 currentPosition, Vector3 currentDirection, Vector3 targetPosition, Vector3 targetDirection, float circleRadius)
+    {
+        Vector3 dirVec = targetPosition - currentPosition;
+
+        //calculate first circle c1
+        Vector3 leftC1 = Vector3.Cross(dirVec, Vector3.up).normalized;
+        leftC1.z = circleRadius;
+        c1 = leftC1 + currentPosition;
+
+        //calculate second circle c2
+        Vector3 leftC2 = Vector3.Cross(-dirVec, Vector3.up).normalized;
+        leftC2.z = circleRadius;
+        c2 = leftC2 + targetPosition;
+
+        c1T.position = c1;
+        c2T.position = c2;
+    }
+    private Vector3 RightPrep(Vector3 vector)
+    {
+        var result1 = new Vector3(vector.z, 0, -1 * vector.x);
+        return result1;
+    }
+    private Vector3 LeftPrep(Vector3 vector)
+    {
+        var result1 = new Vector3(-1 * vector.z, 0, vector.x);
+        return result1;
+    }
     private void OnDrawGizmos()
     {
         for (int i = 0; i < unitPositions.Count; i++)
@@ -246,5 +319,9 @@ public class FormationHandler : MonoBehaviour
         }
 
         Gizmos.DrawCube(centerOfMass, Vector3.one);
+
+        Gizmos.DrawWireSphere(c1T.position, circleRadius);
+        Gizmos.DrawWireSphere(c2T.position, circleRadius);
     }
+
 }
