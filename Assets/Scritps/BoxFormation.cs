@@ -17,9 +17,9 @@ public class BoxFormation : BaseFormation
         {
             for (int j = 0; j < depth; j++)
             {
-                if (hollow && i != 0 && i != width - 1 && j != 0 && j != depth - 1) continue;
+                if (hollow && i != 0 && i != depth - 1 && j != 0 && j != width - 1) continue;
 
-                var pos = new Vector3(i, 0, j) * Spread;
+                var pos = new Vector3(j, 0, -i) * Spread;
 
                 pos += Vector3.Lerp(pos, formationPoint, 5f);
 
@@ -34,6 +34,15 @@ public class BoxFormation : BaseFormation
 
             }
         }
+    }
+
+    public override int GetFormationWidth()
+    {
+        return width;
+    }
+    public override int GetFormationDepth()
+    {
+        return depth;
     }
 
 }

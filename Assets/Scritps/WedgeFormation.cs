@@ -34,34 +34,12 @@ public class WedgeFormation : BaseFormation
             }
         }
     }
-
-    //first iterration
-    /*
-    public GameObject prefab;
-    int rows = 3;
-    int spread = 2;
-    public void WedgeForm()
+    public override int GetFormationWidth()
     {
-        Vector3 targetPosition = new Vector3(-1, 10, 0);
-        float yOffset = -1f;
-        float xOffset = 1f;
-        float rowOffset = -0.5f;
-
-        for (int i = 1; i <= rows; i++)
-        {
-            for (int j = 0; j < i; j++)
-            {
-                GameObject instance = Instantiate(prefab, transform);
-                targetPosition = new Vector3(targetPosition.x + xOffset, 10,targetPosition.z);
-                instance.transform.position = targetPosition;
-
-            }
-
-            //offset new row
-            targetPosition = new Vector3((rowOffset * i) - 1.0f, 10, targetPosition.z + yOffset);
-
-        }
-
-    }*/
-
+        return 0;
+    }
+    public override int GetFormationDepth()
+    {
+        return unitDepth;
+    }
 }

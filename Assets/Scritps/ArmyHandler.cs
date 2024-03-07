@@ -17,7 +17,7 @@ public class ArmyHandler : MonoBehaviour
 
     float Offset = 0f;
 
-    public UnityEngine.GameObject formationPrefab;
+    public GameObject formationPrefab;
 
     public List<GameObject> spawnedFormations = new List<GameObject>();
     public List<Vector3> formationPositions = new List<Vector3>();

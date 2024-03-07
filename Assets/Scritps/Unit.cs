@@ -52,8 +52,8 @@ public class Unit : MonoBehaviour
 
 
             //Change Avoidance Type if moving
-            navAgent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
-            navAgent.avoidancePriority = 20;
+            navAgent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+            navAgent.avoidancePriority = 90;
 
             //Change Avoidance Type if stationary
             if (velocity.x <= 0 && velocity.z <= 0)
@@ -61,8 +61,8 @@ public class Unit : MonoBehaviour
                 //make unit rotate twards parent forward 
                 transform.rotation = Quaternion.Lerp(transform.rotation, transform.parent.rotation, Time.deltaTime);
 
-                navAgent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
-                navAgent.avoidancePriority = 90;
+                navAgent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+                navAgent.avoidancePriority = 20;
             }
         }
     }

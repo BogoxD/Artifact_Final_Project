@@ -38,4 +38,12 @@ public class RadialFormation : BaseFormation
 
         }
     }
+    public override int GetFormationWidth()
+    {
+        return 0;
+    }
+    public override int GetFormationDepth()
+    {
+        return 0;
+    }
 }
