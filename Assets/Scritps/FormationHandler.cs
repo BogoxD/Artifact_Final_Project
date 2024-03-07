@@ -27,12 +27,12 @@ public class FormationHandler : MonoBehaviour
 
     private Vector3 centerOfMass = new();
 
-    [Header("Prefabs")]
+    [Header("GameObjects")]
     [SerializeField] private GameObject unitPrefab;
     private Vector3 formationPoint;
+    [HideInInspector] public List<float> distancesFromUnitsToPoints;
 
     [Header("Debug")]
-    [HideInInspector] public List<float> distancesFromUnitsToPoints;
     private int fartherestUnitIndex;
     private bool isFighting;
     public Transform c2T;
@@ -94,7 +94,7 @@ public class FormationHandler : MonoBehaviour
         }
         else
         {
-            targetPosition = centerOfMass;
+            targetPosition = transform.position;
             targetDir = GetFormationDirection();
         }
         //find the furtherst unit from formation position 
@@ -276,6 +276,8 @@ public class FormationHandler : MonoBehaviour
     }
 
     ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     //STEERING
 
     private Vector3 GetFormationDirection()
@@ -294,13 +296,15 @@ public class FormationHandler : MonoBehaviour
     {
         Vector3 dirVec = (targetPosition - currentPosition).normalized;
 
+        Vector3 tempCurrentDirection = currentDirection.normalized;
+
         //calculate first circle c1
-        Vector3 leftC1 = Vector3.Cross(dirVec, Vector3.up);
+        Vector3 leftC1 = Perpendicular(tempCurrentDirection, dirVec);
         leftC1.z = circleRadius;
         c1 = leftC1 + currentPosition;
 
         //calculate second circle c2
-        Vector3 leftC2 = Vector3.Cross(-dirVec, Vector3.up);
+        Vector3 leftC2 = Perpendicular(targetDirection, dirVec * -1);
         leftC2.z = circleRadius;
         c2 = leftC2 + targetPosition;
 
@@ -319,25 +323,81 @@ public class FormationHandler : MonoBehaviour
             c2 = targetPosition + leftC2 * circleRadius;
         }
 
-        // sideStart = 0;
+        //int sideStart = 0;
         //int sideEnd = 0;
 
-        if (leftC1 == RightPrep(currentDirection.normalized))
+        if (leftC1 == RightPrep(tempCurrentDirection))
             sideStart = 1;
         else
             sideStart = 0;
-        if (leftC2 == RightPrep(targetDirection.normalized))
+
+        if (leftC2 == RightPrep(targetDirection))
             sideEnd = 1;
         else
             sideEnd = 0;
 
+        //Calculate the starting circle exit point
+        if (sideStart != sideEnd)
+        {
+            float radius = circleRadius;
+
+            //d is the intersection point between line c1,c2 and line c1_exit, c2_enter 
+            float d = (c2 - c1).magnitude / 2;
+            //angle 1
+            float a1 = Mathf.Acos(radius / d) / 2;
+            //angle 2
+            float a2 = Vector3.Angle(c2, c1);
+            //angle 3
+            float a3 = 0;
+            if (sideStart == 1 && sideEnd == 0)
+                a3 = a2 + a1;
+            else
+                a3 = a2 - a1;
+
+            c1_exitAngle = a3;
+        }
+        //Calculate the ending cicle entry point
+        if (sideStart != sideEnd)
+        {
+            var radius = circleRadius;
+            //d is the intersection point between line c1,c2 and line c1_exit, c2_enter 
+            float d = (c2 - c1).magnitude / 2;
+            //angle 1
+            float b1 = Mathf.Acos(radius / d);
+            //angle 2
+            float b2 = Vector3.Angle(c1, c2);
+            //angle 3
+            float b3 = 0;
+            if (sideStart == 1 && sideEnd == 0)
+                b3 = b2 + b1;
+            else
+                b3 = b2 - b1;
+
+            c2_enterAngle = b3;
+        }
+
+        //calculate points along the path
+        //GeneratePathArray(sideStart, sideEnd);
 
     }
-    
+    private void GeneratePathArray(int directionStart, int directionEnd)
+    {
+
+        throw new System.NotImplementedException();
+    }
+    private void GeneratePath_Clockwise(float startAngle, float endAngle, Vector3 center, List<Vector3> path)
+    {
+
+    }
+    private void GeneratePath_CounterClockwise(float startAngle, float endAngle, Vector3 center, List<Vector3> path)
+    {
+
+    }
+
     private Vector3 Perpendicular(Vector3 vector, Vector3 directionVector)
     {
-        var result1 = new Vector3(-1 * vector.y, vector.x);
-        var result2 = new Vector3(vector.y, -1 * vector.x);
+        var result1 = new Vector3(vector.x, vector.y, vector.z * -1);
+        var result2 = new Vector3(vector.x * -1, vector.y, vector.z);
 
         if (Vector3.Dot(vector, directionVector) >= 0)
             return result1;
@@ -346,18 +406,14 @@ public class FormationHandler : MonoBehaviour
     }
     private Vector3 RightPrep(Vector3 vector)
     {
-        var result1 = new Vector3(vector.z, -1 * vector.x);
+        var result1 = new Vector3(vector.x * -1, vector.y, vector.z);
         return result1;
     }
     private Vector3 LeftPrep(Vector3 vector)
     {
-        var result1 = new Vector3(-1 * vector.z, vector.x);
+        var result1 = new Vector3(vector.x, vector.y, vector.z * -1);
         return result1;
     }
-    //private Vector3 Perpendicular(Vector3 vec1, Vector3 directionVec)
-    //{
-
-    //}
     private void OnDrawGizmos()
     {
         for (int i = 0; i < unitPositions.Count; i++)

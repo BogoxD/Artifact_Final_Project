@@ -59,9 +59,18 @@ PrefabInstance:
       propertyPath: unitPrefab
       value: 
       objectReference: {fileID: 3316376772576343486, guid: e5fd788adcff1c8499c8d0539c0772b7, type: 3}
+    - target: {fileID: 5015159480054624925, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: formationTrans
+      value: 
+      objectReference: {fileID: 1740786272270573258}
     - target: {fileID: 5015159480054624926, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
       propertyPath: m_Name
-      value: SquareFormation_Skirmisher
+      value: Skirmisher_SquareFormation
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+--- !u!4 &1740786272270573258 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1828848670, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+  m_PrefabInstance: {fileID: 1740786272623024852}
+  m_PrefabAsset: {fileID: 0}

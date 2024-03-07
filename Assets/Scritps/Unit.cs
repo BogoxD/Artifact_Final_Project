@@ -24,6 +24,8 @@ public class Unit : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         currentHealth = maxHealth;
+        rb.isKinematic = true;
+        Invoke(nameof(ResetKinematicStatus), 2f);
     }
 
     public NavMeshAgent GetNavMeshAgent()
@@ -56,7 +58,7 @@ public class Unit : MonoBehaviour
             //Change Avoidance Type if stationary
             if (velocity.x <= 0 && velocity.z <= 0)
             {
-                //make unit rotate twords parent forward vector
+                //make unit rotate twards parent forward 
                 transform.rotation = Quaternion.Lerp(transform.rotation, transform.parent.rotation, Time.deltaTime);
 
                 navAgent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
@@ -78,6 +80,10 @@ public class Unit : MonoBehaviour
             DamageUnit(Random.Range(minAttackDamage, maxAttackDamage), collision.gameObject.GetComponent<Unit>());
         }
     }*/
+    private void ResetKinematicStatus()
+    {
+        rb.isKinematic = false;
+    }
     public void DamageUnit(int ammount, Unit unit)
     {
         unit.currentHealth -= ammount;

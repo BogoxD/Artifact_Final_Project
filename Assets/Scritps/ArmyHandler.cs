@@ -65,9 +65,9 @@ public class ArmyHandler : MonoBehaviour
     }
     void SpawnFormation(IEnumerable<Vector3> positions)
     {
-        for(int i = 0; i < positions.Count(); i++)
+        foreach(Vector3 pos in positions)
         {
-            var unit = Instantiate(formationPrefab, positions.ToList()[i] + formationPositions[i], Quaternion.identity, transform);
+            var unit = Instantiate(formationPrefab, pos, Quaternion.identity, transform);
             spawnedFormations.Add(unit);
         }
     }
@@ -132,11 +132,11 @@ public class ArmyHandler : MonoBehaviour
     {
         return formationPositions;
     }
-    public void SetFormationPosition(Transform trans)
+    public void SetFormationPosition(Vector3 position)
     {
         for (int i = 0; i < formationPositions.Count; i++)
         {
-            formationPositions[i] += trans.position;
+            formationPositions[i] += position;
         }
     }
     public Vector3 GetArmyNoise(Vector3 pos)

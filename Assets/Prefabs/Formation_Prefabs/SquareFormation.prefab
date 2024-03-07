@@ -134,10 +134,14 @@ MonoBehaviour:
   move3: 0
   avarageSpeed: 0
   hasDestinationReached: 0
-  direction: {fileID: 1828848670}
+  formationTrans: {fileID: 1828848670}
+  circleRadius: 0
   unitPrefab: {fileID: 4078945737046587363, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
   distancesFromUnitsToPoints: []
-  formationDirection: {x: 0, y: 0, z: 0}
+  c2T: {fileID: 0}
+  c1T: {fileID: 0}
+  sideStart: 0
+  sideEnd: 0
   spawnedUnits: []
   unitPositions: []
   movingPoints:
