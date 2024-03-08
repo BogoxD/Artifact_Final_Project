@@ -60,6 +60,10 @@ public class FormationHandler : MonoBehaviour
     [HideInInspector] public List<Vector3> unitPositions = new List<Vector3>();
     public GameObject[] movingPoints;
     private int _PointIndexToMoveTo = 0;
+
+    int i = 0;
+    private float nextActionTime = 0.0f;
+    public float period = 0.1f;
     public int PointIndexToMoveTo
     {
         get { return _PointIndexToMoveTo; }
@@ -98,21 +102,25 @@ public class FormationHandler : MonoBehaviour
         _currentTransform.position = transform.position;
         _currentTransform.forward = transform.forward;
     }
-    void Update()
+    void FixedUpdate()
     {
         //Update formation
         SetUpFormation();
 
+        if (Time.time > nextActionTime)
+        {
+            nextActionTime += period;
+
+            if (PointIndexToMoveTo > -1 && movingPoints.Length > 0 && _path.Count > 2 && i < _path.Count - 1)
+            {
+                MoveUnits(_path[i]);
+                i++;
+            }
+        }
+
         _avarageSpeed = ReturnAvarageSpeed(spawnedUnits);
         _currentTransform.forward = GetFormationDirection();
         _centerOfMass = FindCenterOfMass(spawnedUnits);
-
-
-
-        if (PointIndexToMoveTo > -1 && movingPoints.Length > 0)
-        {
-            MoveUnits(movingPoints[_PointIndexToMoveTo].transform.position);
-        }
 
         //find the furtherst unit from formation position 
         if (DistancesFromUnitsToPoints.Count > 0)
@@ -181,27 +189,28 @@ public class FormationHandler : MonoBehaviour
             NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
 
             unitPositions[i] += point;
-            agent.SetDestination(unitPositions[i]);
+
+            //agent.SetDestination(unitPositions[i]);
 
             //COMMENT OUT THE MOVEMENT FOR NOW
 
-            /*first row of the formation
-            //if (i < Formation.GetFormationWidth())
-            //{
-                 agent.SetDestination(unitPositions[i]);
-              }
+            //first row of the formation
+            if (i < Formation.GetFormationWidth())
+            {
+                agent.SetDestination(unitPositions[i]);
+            }
             else
             {
                 if (spawnedUnits[i - Formation.GetFormationDepth()].magnitude == 0)
                 {
-                   agent.SetDestination(unitPositions[i]);
+                    agent.SetDestination(unitPositions[i]);
                 }
                 else
                 {
                     //delete Vector3.one later
                     agent.SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position - Vector3.one);
                 }
-            }*/
+            }
 
         }
 
@@ -316,18 +325,6 @@ public class FormationHandler : MonoBehaviour
         {
             unit.SetPath(path);
         }
-    }
-    private NavMeshPath ConvertPath(List<Vector3> path)
-    {
-        NavMeshPath newPath = new NavMeshPath();
-
-        for (int i = 0; i < path.Count; i++)
-        {
-            //define newPath.corners lenght somehow to be the same as path
-            //add all the elements to newPath.corners
-        }
-
-        return newPath;
     }
     private Vector3 GetFormationDirection()
     {
@@ -447,9 +444,6 @@ public class FormationHandler : MonoBehaviour
             GeneratePath_Clockwise(startAngle2, endAngle2, _c2, _path);
         else
             GeneratePath_CounterClockwise(startAngle2, endAngle2, _c2, _path);
-
-        //Set path
-        SetFormationPath(ConvertPath(_path));
 
     }
     private void GeneratePath_Clockwise(float startAngle, float endAngle, Vector3 center, List<Vector3> path)
