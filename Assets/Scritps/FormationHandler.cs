@@ -195,7 +195,7 @@ public class FormationHandler : MonoBehaviour
             //COMMENT OUT THE MOVEMENT FOR NOW
 
             //first row of the formation
-            if (i < Formation.GetFormationWidth())
+           /* if (i < Formation.GetFormationWidth())
             {
                 agent.SetDestination(unitPositions[i]);
             }
@@ -211,7 +211,7 @@ public class FormationHandler : MonoBehaviour
                     agent.SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position - Vector3.one);
                 }
             }
-
+            */
         }
 
     }
