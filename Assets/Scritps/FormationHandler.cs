@@ -309,13 +309,25 @@ public class FormationHandler : MonoBehaviour
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
     //STEERING
-    private void SetFormationPath(List<Vector3> path)
+    private void SetFormationPath(NavMeshPath path)
     {
-        //set path somehow
+        //set path
         foreach (Unit unit in spawnedUnits)
         {
-            //unit.SetPath(path);
+            unit.SetPath(path);
         }
+    }
+    private NavMeshPath ConvertPath(List<Vector3> path)
+    {
+        NavMeshPath newPath = new NavMeshPath();
+
+        for (int i = 0; i < path.Count; i++)
+        {
+            //define newPath.corners lenght somehow to be the same as path
+            //add all the elements to newPath.corners
+        }
+
+        return newPath;
     }
     private Vector3 GetFormationDirection()
     {
@@ -437,7 +449,7 @@ public class FormationHandler : MonoBehaviour
             GeneratePath_CounterClockwise(startAngle2, endAngle2, _c2, _path);
 
         //Set path
-        SetFormationPath(_path);
+        SetFormationPath(ConvertPath(_path));
 
     }
     private void GeneratePath_Clockwise(float startAngle, float endAngle, Vector3 center, List<Vector3> path)
