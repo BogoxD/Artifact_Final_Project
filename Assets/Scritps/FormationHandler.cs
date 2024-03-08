@@ -6,11 +6,11 @@ using UnityEngine;
 
 public class FormationHandler : MonoBehaviour
 {
+
+    
     private BaseFormation formation;
     [Header("Steering")]
-    [SerializeField] bool move1 = false;
-    [SerializeField] bool move2 = false;
-    [SerializeField] bool move3 = false;
+
     [SerializeField] float avarageSpeed;
     [SerializeField] private bool hasDestinationReached;
     [SerializeField] Transform formationTrans;
@@ -22,7 +22,7 @@ public class FormationHandler : MonoBehaviour
     float c1_exitAngle = 0;
     float c2_enterAngle = 0;
     // How far to go around the circles when generating the points on the path
-    float angleStep = ((5 / 180) * Mathf.PI);
+    float angleStep = ((5f / 180f) * Mathf.PI);
     //path
     [SerializeField] List<Vector3> path = new List<Vector3>();
     //can calculate path
@@ -61,7 +61,28 @@ public class FormationHandler : MonoBehaviour
     [HideInInspector] public List<Unit> spawnedUnits = new List<Unit>();
     [HideInInspector] public List<Vector3> unitPositions = new List<Vector3>();
     public GameObject[] movingPoints;
+    private int _PointIndexToMoveTo = 0;
+    public int PointIndexToMoveTo
+    {
+        get { return _PointIndexToMoveTo; }
+        set
+        {
+            if (value != _PointIndexToMoveTo)
+            {
+                _PointIndexToMoveTo = value;
+                _PointIndexToMoveTo = (_PointIndexToMoveTo < -1) ? -1 : _PointIndexToMoveTo;
+                _PointIndexToMoveTo = (_PointIndexToMoveTo >= movingPoints.Length)
+                    ? movingPoints.Length - 1
+                    : _PointIndexToMoveTo;
 
+
+                Debug.Log("calculateing Steering");
+                CalculateSteeringPath(formationTrans.position, formationTrans.forward, targetPosition, targetDir,
+                    circleRadius);
+                int i = 0;
+            }
+        }
+    }
     private void Start()
     {
         movingPoints = GameObject.FindGameObjectsWithTag("Waypoint");
@@ -80,23 +101,13 @@ public class FormationHandler : MonoBehaviour
         formationTrans.forward = GetFormationDirection();
         centerOfMass = FindCenterOfMass(spawnedUnits);
 
-        if (move1 && movingPoints.Length > 0)
+       
+
+        if (PointIndexToMoveTo >-1 && movingPoints.Length > 0)
         {
-            MoveUnits(movingPoints[0].transform.position);
-            targetPosition = movingPoints[0].transform.position;
-            targetDir = movingPoints[0].transform.forward;
-        }
-        else if (move2 && movingPoints.Length > 0)
-        {
-            MoveUnits(movingPoints[1].transform.position);
-            targetPosition = movingPoints[1].transform.position;
-            targetDir = movingPoints[1].transform.forward;
-        }
-        else if (move3 && movingPoints.Length > 0)
-        {
-            MoveUnits(movingPoints[2].transform.position);
-            targetPosition = movingPoints[2].transform.position;
-            targetDir = movingPoints[2].transform.forward;
+            MoveUnits(movingPoints[_PointIndexToMoveTo].transform.position);
+            targetPosition = movingPoints[_PointIndexToMoveTo].transform.position;
+            targetDir = movingPoints[_PointIndexToMoveTo].transform.forward;
         }
         else
         {
@@ -162,26 +173,24 @@ public class FormationHandler : MonoBehaviour
     {
 
         //calculate steering path when moving
-        if (canCalculatePath)
-        {
-            CalculateSteeringPath(formationTrans.position, formationTrans.forward, targetPosition, targetDir, circleRadius);
-            canCalculatePath = false;
-        }
+        //if (canCalculatePath)
+        //{
+        //    Debug.Log("calculateing Steering");
+        //    CalculateSteeringPath(formationTrans.position, formationTrans.forward, targetPosition, targetDir, circleRadius);
+        //    canCalculatePath = false;
+        //}
 
         for (int i = 0; i < spawnedUnits.Count; i++)
         {
             NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
+            unitPositions[i] += point;
             //first row of the formation
             if (i < Formation.GetFormationWidth())
             {
-                unitPositions[i] += point;
-
                 agent.SetDestination(unitPositions[i]);
             }
             else
             {
-                unitPositions[i] += point;
-
                 if (spawnedUnits[i - Formation.GetFormationDepth()].magnitude == 0)
                 {
                     agent.SetDestination(unitPositions[i]);
@@ -503,8 +512,16 @@ public class FormationHandler : MonoBehaviour
 
         Gizmos.DrawCube(centerOfMass, Vector3.one);
 
+        Color gizmoreResetColor = Gizmos.color;
+
+        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(c1T.position, circleRadius);
+        Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(c2T.position, circleRadius);
+
+        Gizmos.color = gizmoreResetColor;
+
+        //Gizmos.DrawWireSphere();
     }
 
 }
