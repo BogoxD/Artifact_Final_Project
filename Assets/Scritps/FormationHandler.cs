@@ -7,13 +7,13 @@ using UnityEngine;
 public class FormationHandler : MonoBehaviour
 {
 
-    
+
     private BaseFormation _formation;
     [Header("Steering")]
 
     [SerializeField] float _avarageSpeed;
     [SerializeField] private bool _hasDestinationReached;
-    [SerializeField] Transform _formationTrans;
+    [SerializeField] Transform _currentTransform;
     [SerializeField] float _circleRadius;
     // Centers of the two circles used for generating the path
     Vector3 _c1 = new();
@@ -75,8 +75,9 @@ public class FormationHandler : MonoBehaviour
 
 
                 Debug.Log("calculateing Steering");
-                CalculateSteeringPath(_formationTrans.position, _formationTrans.forward, _targetPosition, _targetDir,
-                    _circleRadius);
+                _path.Clear();
+                CalculateSteeringPath(_currentTransform.position, _currentTransform.forward, _targetPosition, _targetDir,
+                    _circleRadius); ;
                 int i = 0;
             }
         }
@@ -84,11 +85,11 @@ public class FormationHandler : MonoBehaviour
     private void Start()
     {
         movingPoints = GameObject.FindGameObjectsWithTag("Waypoint");
-        
+
         if (transform.parent)
             parentArmy = transform.parent.GetComponent<ArmyHandler>();
 
-        _formationTrans.position = transform.position;
+        _currentTransform.position = transform.position;
     }
     void Update()
     {
@@ -96,22 +97,21 @@ public class FormationHandler : MonoBehaviour
         SetUpFormation();
 
         _avarageSpeed = ReturnAvarageSpeed(spawnedUnits);
-        _formationTrans.forward = GetFormationDirection();
+        _currentTransform.forward = GetFormationDirection();
         _centerOfMass = FindCenterOfMass(spawnedUnits);
 
-       
 
-        if (PointIndexToMoveTo >-1 && movingPoints.Length > 0)
+
+        if (PointIndexToMoveTo > -1 && movingPoints.Length > 0)
         {
-            _path.Clear();
             MoveUnits(movingPoints[_PointIndexToMoveTo].transform.position);
             _targetPosition = movingPoints[_PointIndexToMoveTo].transform.position;
             _targetDir = movingPoints[_PointIndexToMoveTo].transform.forward;
         }
         else
         {
-            _targetPosition = transform.position;
-            _targetDir = GetFormationDirection();
+            _targetPosition = _currentTransform.position;
+            _targetDir = _currentTransform.forward;
             //MoveUnits(targetPosition);
         }
         //find the furtherst unit from formation position 
@@ -121,7 +121,7 @@ public class FormationHandler : MonoBehaviour
         //formationTrans is used for calculating the steering path with circles
         if (_hasDestinationReached)
         {
-            _formationTrans.position = _centerOfMass;
+            _currentTransform.position = _centerOfMass;
         }
 
         _hasDestinationReached = HasReachedDestination(spawnedUnits);
@@ -170,19 +170,11 @@ public class FormationHandler : MonoBehaviour
     }
     public void MoveUnits(Vector3 point)
     {
-
-        //calculate steering path when moving
-        //if (canCalculatePath)
-        //{
-        //    Debug.Log("calculateing Steering");
-        //    CalculateSteeringPath(formationTrans.position, formationTrans.forward, targetPosition, targetDir, circleRadius);
-        //    canCalculatePath = false;
-        //}
-
         for (int i = 0; i < spawnedUnits.Count; i++)
         {
             NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
             unitPositions[i] += point;
+
             //first row of the formation
             if (i < Formation.GetFormationWidth())
             {
@@ -200,6 +192,17 @@ public class FormationHandler : MonoBehaviour
                     agent.SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position - Vector3.one);
                 }
             }
+        }
+    }
+    public void SetFormationPath(List<Vector3> path)
+    {
+        NavMeshPath newPath = new();
+
+        for (int i = 0; i < spawnedUnits.Count; i++)
+        {
+            NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
+            newPath.GetCornersNonAlloc(path.ToArray());
+            agent.SetPath(newPath);
         }
     }
     public void SetUnitPositions(Vector3 point)
@@ -322,15 +325,16 @@ public class FormationHandler : MonoBehaviour
     {
         Vector3 dirVec = (targetPosition - currentPosition).normalized;
 
-        Vector3 tempCurrentDirection = currentDirection.normalized;
+        Vector3 tempCurrentDirection = currentDirection;
 
         //calculate first circle c1
         Vector3 leftC1 = Perpendicular(tempCurrentDirection, dirVec);
-        _c1 += leftC1 + currentPosition;
+        _c1 = leftC1 + currentPosition;
 
         //calculate second circle c2
         Vector3 leftC2 = Perpendicular(targetDirection.normalized, dirVec * -1);
-        _c2 += leftC2 + targetPosition;
+
+        _c2 = leftC2 + targetPosition;
 
         //debug
         c1T.position = _c1;
@@ -338,17 +342,14 @@ public class FormationHandler : MonoBehaviour
 
         //if the circles overlap scale down the circles
         var distance = Vector3.Distance(_c2, _c1);
-        /*if (distance < 2 * circleRadius)
+        /*if (distance < circleRadius)
         {
-            leftC1 = Vector3.Scale(c1, -Vector3.one);
-            leftC2 = Vector3.Scale(c2, -Vector3.one);
+            leftC1 = Vector3.Scale(_c1, -Vector3.one);
+            leftC2 = Vector3.Scale(_c2, -Vector3.one);
 
-            c1 = currentPosition + leftC1 * circleRadius;
-            c2 = targetPosition + leftC2 * circleRadius;
+            _c1 = currentPosition + leftC1 * circleRadius;
+            _c2 = targetPosition + leftC2 * circleRadius;
         }*/
-
-        //int sideStart = 0;
-        //int sideEnd = 0;
 
         if (leftC1 == RightPrep(tempCurrentDirection))
             SideStart = 1;
@@ -410,7 +411,7 @@ public class FormationHandler : MonoBehaviour
         Vector3 xVec = new Vector3(1, 0, 0);
         Vector3 zVec = new Vector3(0, 0, 1);
 
-        float startAngle = Vector3.Angle(_formationTrans.position, _c1);
+        float startAngle = Vector3.Angle(_currentTransform.position, _c1);
         float endAngle = _c1_exitAngle;
 
         if (directionStart == 0) //clockwise
@@ -428,8 +429,7 @@ public class FormationHandler : MonoBehaviour
             GeneratePath_CounterClockwise(startAngle2, endAngle2, _c2, _path);
 
         //set path
-
-
+        SetFormationPath(_path);
     }
     private void GeneratePath_Clockwise(float startAngle, float endAngle, Vector3 center, List<Vector3> path)
     {

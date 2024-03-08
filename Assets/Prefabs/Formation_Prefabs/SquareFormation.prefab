@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &78699900
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 78699901}
+  m_Layer: 0
+  m_Name: c1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &78699901
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 78699900}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5015159480054624924}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1828848669
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,6 +61,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5015159480054624924}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2128499129
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2128499130}
+  m_Layer: 0
+  m_Name: c2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2128499130
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128499129}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5015159480054624924}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5015159480054624926
 GameObject:
@@ -64,6 +126,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1828848670}
+  - {fileID: 78699901}
+  - {fileID: 2128499130}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -129,19 +193,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a3b37da07628b34d8d5dd3fc364fbcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  move1: 0
-  move2: 0
-  move3: 0
-  avarageSpeed: 0
-  hasDestinationReached: 0
-  formationTrans: {fileID: 1828848670}
-  circleRadius: 0
-  unitPrefab: {fileID: 4078945737046587363, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
-  distancesFromUnitsToPoints: []
-  c2T: {fileID: 0}
-  c1T: {fileID: 0}
-  sideStart: 0
-  sideEnd: 0
+  _avarageSpeed: 0
+  _hasDestinationReached: 0
+  _formationTrans: {fileID: 0}
+  _circleRadius: 0
+  _path: []
+  _unitPrefab: {fileID: 4078945737046587363, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
+  DistancesFromUnitsToPoints: []
+  c2T: {fileID: 2128499130}
+  c1T: {fileID: 78699901}
+  SideStart: 0
+  SideEnd: 0
   spawnedUnits: []
   unitPositions: []
   movingPoints:
