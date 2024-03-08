@@ -195,8 +195,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _avarageSpeed: 0
   _hasDestinationReached: 0
-  _formationTrans: {fileID: 0}
-  _circleRadius: 0
+  _currentTransform: {fileID: 1828848670}
+  _circleRadius: 7
   _path: []
   _unitPrefab: {fileID: 4078945737046587363, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
   DistancesFromUnitsToPoints: []

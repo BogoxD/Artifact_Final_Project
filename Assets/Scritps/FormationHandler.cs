@@ -75,6 +75,12 @@ public class FormationHandler : MonoBehaviour
 
 
                 Debug.Log("calculateing Steering");
+                //setup variables before calculating path
+                _targetPosition = movingPoints[_PointIndexToMoveTo].transform.position;
+                _targetDir = movingPoints[_PointIndexToMoveTo].transform.forward;
+
+                _currentTransform.position = _centerOfMass;
+
                 _path.Clear();
                 CalculateSteeringPath(_currentTransform.position, _currentTransform.forward, _targetPosition, _targetDir,
                     _circleRadius); ;
@@ -90,6 +96,7 @@ public class FormationHandler : MonoBehaviour
             parentArmy = transform.parent.GetComponent<ArmyHandler>();
 
         _currentTransform.position = transform.position;
+        _currentTransform.forward = transform.forward;
     }
     void Update()
     {
@@ -105,15 +112,8 @@ public class FormationHandler : MonoBehaviour
         if (PointIndexToMoveTo > -1 && movingPoints.Length > 0)
         {
             MoveUnits(movingPoints[_PointIndexToMoveTo].transform.position);
-            _targetPosition = movingPoints[_PointIndexToMoveTo].transform.position;
-            _targetDir = movingPoints[_PointIndexToMoveTo].transform.forward;
         }
-        else
-        {
-            _targetPosition = _currentTransform.position;
-            _targetDir = _currentTransform.forward;
-            //MoveUnits(targetPosition);
-        }
+        
         //find the furtherst unit from formation position 
         if (DistancesFromUnitsToPoints.Count > 0)
             _fartherestUnitIndex = FindFarUnitIndex();
@@ -122,6 +122,8 @@ public class FormationHandler : MonoBehaviour
         if (_hasDestinationReached)
         {
             _currentTransform.position = _centerOfMass;
+            _targetPosition = _currentTransform.position;
+            _targetDir = _currentTransform.forward;
         }
 
         _hasDestinationReached = HasReachedDestination(spawnedUnits);
@@ -174,36 +176,30 @@ public class FormationHandler : MonoBehaviour
         {
             NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
             unitPositions[i] += point;
+            agent.SetDestination(unitPositions[i]);
 
-            //first row of the formation
-            if (i < Formation.GetFormationWidth())
-            {
-                agent.SetDestination(unitPositions[i]);
-            }
+            //COMMENT OUT THE MOVEMENT FOR NOW
+
+            /*first row of the formation
+            //if (i < Formation.GetFormationWidth())
+            //{
+                 agent.SetDestination(unitPositions[i]);
+              }
             else
             {
                 if (spawnedUnits[i - Formation.GetFormationDepth()].magnitude == 0)
                 {
-                    agent.SetDestination(unitPositions[i]);
+                   agent.SetDestination(unitPositions[i]);
                 }
                 else
                 {
                     //delete Vector3.one later
                     agent.SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position - Vector3.one);
                 }
-            }
+            }*/
+            
         }
-    }
-    public void SetFormationPath(List<Vector3> path)
-    {
-        NavMeshPath newPath = new();
 
-        for (int i = 0; i < spawnedUnits.Count; i++)
-        {
-            NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
-            newPath.GetCornersNonAlloc(path.ToArray());
-            agent.SetPath(newPath);
-        }
     }
     public void SetUnitPositions(Vector3 point)
     {
@@ -329,12 +325,12 @@ public class FormationHandler : MonoBehaviour
 
         //calculate first circle c1
         Vector3 leftC1 = Perpendicular(tempCurrentDirection, dirVec);
-        _c1 = leftC1 + currentPosition;
+        _c1 = currentPosition + (leftC1 * circleRadius);
 
         //calculate second circle c2
         Vector3 leftC2 = Perpendicular(targetDirection.normalized, dirVec * -1);
 
-        _c2 = leftC2 + targetPosition;
+        _c2 = targetPosition + (leftC2 * circleRadius);
 
         //debug
         c1T.position = _c1;
@@ -428,8 +424,6 @@ public class FormationHandler : MonoBehaviour
         else
             GeneratePath_CounterClockwise(startAngle2, endAngle2, _c2, _path);
 
-        //set path
-        SetFormationPath(_path);
     }
     private void GeneratePath_Clockwise(float startAngle, float endAngle, Vector3 center, List<Vector3> path)
     {

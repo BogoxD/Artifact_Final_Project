@@ -1701,11 +1701,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0bb5029397a7e4849837e8e0a95414bd, type: 3}
---- !u!4 &1828848670 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1828848670, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
-  m_PrefabInstance: {fileID: 5015159479139727439}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1936748574
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2296,14 +2291,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5015159480054624925, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
-      propertyPath: _circleRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 5015159480054624925, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
-      propertyPath: _formationTrans
-      value: 
-      objectReference: {fileID: 1828848670}
     - target: {fileID: 5015159480054624926, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
       propertyPath: m_Name
       value: SquareFormation
