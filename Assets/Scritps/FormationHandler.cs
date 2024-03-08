@@ -170,11 +170,30 @@ public class FormationHandler : MonoBehaviour
             _hasDestinationReached = HasReachedDestination(spawnedUnits);
         }
     }
+    private NavMeshPath GetPath(List<Vector3> path)
+    {
+        NavMeshPath newPath = new();
+
+        for(int i = 0; i < path.Count; i++)
+        {
+            newPath.GetCornersNonAlloc(path.ToArray());
+        }
+
+        return newPath;
+    }
+    private void SetFormationPath(NavMeshPath path)
+    {
+        foreach(Unit unit in spawnedUnits)
+        {
+            unit.SetPath(path);
+        }
+    }
     public void MoveUnits(Vector3 point)
     {
         for (int i = 0; i < spawnedUnits.Count; i++)
         {
             NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
+
             unitPositions[i] += point;
             agent.SetDestination(unitPositions[i]);
 
@@ -423,6 +442,9 @@ public class FormationHandler : MonoBehaviour
             GeneratePath_Clockwise(startAngle2, endAngle2, _c2, _path);
         else
             GeneratePath_CounterClockwise(startAngle2, endAngle2, _c2, _path);
+
+        //Set path
+        SetFormationPath(GetPath(_path));
 
     }
     private void GeneratePath_Clockwise(float startAngle, float endAngle, Vector3 center, List<Vector3> path)

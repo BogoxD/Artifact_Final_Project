@@ -33,7 +33,10 @@ public class Unit : MonoBehaviour
         navAgent = GetComponent<NavMeshAgent>();
         return navAgent;
     }
-
+    public void SetPath(NavMeshPath path)
+    {
+        navAgent.SetPath(path);
+    }
     private void Update()
     {
         if(currentHealth <= 0)
