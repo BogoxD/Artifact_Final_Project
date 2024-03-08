@@ -113,7 +113,7 @@ public class FormationHandler : MonoBehaviour
         {
             MoveUnits(movingPoints[_PointIndexToMoveTo].transform.position);
         }
-        
+
         //find the furtherst unit from formation position 
         if (DistancesFromUnitsToPoints.Count > 0)
             _fartherestUnitIndex = FindFarUnitIndex();
@@ -170,23 +170,9 @@ public class FormationHandler : MonoBehaviour
             _hasDestinationReached = HasReachedDestination(spawnedUnits);
         }
     }
-    private NavMeshPath GetPath(List<Vector3> path)
+    public Vector3 GetTargetPos()
     {
-        NavMeshPath newPath = new();
-
-        for(int i = 0; i < path.Count; i++)
-        {
-            newPath.GetCornersNonAlloc(path.ToArray());
-        }
-
-        return newPath;
-    }
-    private void SetFormationPath(NavMeshPath path)
-    {
-        foreach(Unit unit in spawnedUnits)
-        {
-            unit.SetPath(path);
-        }
+        return _targetPosition;
     }
     public void MoveUnits(Vector3 point)
     {
@@ -216,7 +202,7 @@ public class FormationHandler : MonoBehaviour
                     agent.SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position - Vector3.one);
                 }
             }*/
-            
+
         }
 
     }
@@ -323,7 +309,14 @@ public class FormationHandler : MonoBehaviour
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
     //STEERING
-
+    private void SetFormationPath(List<Vector3> path)
+    {
+        //set path somehow
+        foreach (Unit unit in spawnedUnits)
+        {
+            //unit.SetPath(path);
+        }
+    }
     private Vector3 GetFormationDirection()
     {
         Vector3 direction = new Vector3();
@@ -444,7 +437,7 @@ public class FormationHandler : MonoBehaviour
             GeneratePath_CounterClockwise(startAngle2, endAngle2, _c2, _path);
 
         //Set path
-        SetFormationPath(GetPath(_path));
+        SetFormationPath(_path);
 
     }
     private void GeneratePath_Clockwise(float startAngle, float endAngle, Vector3 center, List<Vector3> path)

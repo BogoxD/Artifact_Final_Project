@@ -23,6 +23,7 @@ public class Unit : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        navAgent = GetComponent<NavMeshAgent>();
         currentHealth = maxHealth;
         rb.isKinematic = true;
         Invoke(nameof(ResetKinematicStatus), 2f);
@@ -30,7 +31,6 @@ public class Unit : MonoBehaviour
 
     public NavMeshAgent GetNavMeshAgent()
     {
-        navAgent = GetComponent<NavMeshAgent>();
         return navAgent;
     }
     public void SetPath(NavMeshPath path)
