@@ -191,7 +191,6 @@ public class FormationHandler : MonoBehaviour
             unitPositions[i] += point;
 
             agent.SetDestination(unitPositions[i]);
-
             //COMMENT OUT THE MOVEMENT FOR NOW
 
             //first row of the formation
@@ -337,11 +336,11 @@ public class FormationHandler : MonoBehaviour
         Vector3 tempCurrentDirection = currentDirection;
 
         //calculate first circle c1
-        Vector3 leftC1 = Perpendicular(tempCurrentDirection, dirVec);
+        Vector3 leftC1 = Vector3.Cross(tempCurrentDirection, transform.up);
         _c1 = currentPosition + (leftC1 * circleRadius);
 
         //calculate second circle c2
-        Vector3 leftC2 = Perpendicular(targetDirection.normalized, dirVec * -1);
+        Vector3 leftC2 = Vector3.Cross(targetDirection.normalized, transform.up);
 
         _c2 = targetPosition + (leftC2 * circleRadius);
 
