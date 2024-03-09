@@ -107,7 +107,7 @@ public class FormationHandler : MonoBehaviour
         //Update formation
         SetUpFormation();
 
-        if (Time.time * 0.8 > nextActionTime)
+        if (Time.time > nextActionTime)
         {
             nextActionTime += period;
 
@@ -191,6 +191,7 @@ public class FormationHandler : MonoBehaviour
             unitPositions[i] += point;
 
             agent.SetDestination(unitPositions[i]);
+            //spawnedUnits[i].transform.position = unitPositions[i];
             //COMMENT OUT THE MOVEMENT FOR NOW
 
             //first row of the formation
@@ -336,11 +337,11 @@ public class FormationHandler : MonoBehaviour
         Vector3 tempCurrentDirection = currentDirection;
 
         //calculate first circle c1
-        Vector3 leftC1 = Vector3.Cross(tempCurrentDirection, transform.up);
+        Vector3 leftC1 = Perpendicular(tempCurrentDirection, dirVec);
         _c1 = currentPosition + (leftC1 * circleRadius);
 
         //calculate second circle c2
-        Vector3 leftC2 = Vector3.Cross(targetDirection.normalized, transform.up);
+        Vector3 leftC2 = Perpendicular(targetDirection.normalized, -dirVec);
 
         _c2 = targetPosition + (leftC2 * circleRadius);
 
