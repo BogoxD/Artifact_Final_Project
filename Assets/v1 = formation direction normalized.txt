@@ -1,0 +1,9 @@
+v1 = formation direction normalized
+dt = dirVec normalized;
+v2 = leftC1;
+c1 = c1;
+
+v3 = target direction normalized
+v4 = leftC2;
+c2 = c2;
+
