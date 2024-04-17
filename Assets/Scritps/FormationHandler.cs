@@ -22,7 +22,7 @@ public class FormationHandler : MonoBehaviour
     float _c1_exitAngle = 0;
     float _c2_enterAngle = 0;
     // How far to go around the circles when generating the points on the path
-    float _angleStep = ((10f / 180f) * Mathf.PI);
+    float _angleStep = ((5f / 180f) * Mathf.PI);
     //path
     [SerializeField] List<Vector3> _path = new List<Vector3>();
 
