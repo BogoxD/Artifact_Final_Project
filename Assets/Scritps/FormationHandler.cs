@@ -22,7 +22,7 @@ public class FormationHandler : MonoBehaviour
     float _c1_exitAngle = 0;
     float _c2_enterAngle = 0;
     // How far to go around the circles when generating the points on the path
-    float _angleStep = ((5f / 180f) * Mathf.PI);
+    float _angleStep = ((10f / 180f) * Mathf.PI);
     //path
     [SerializeField] List<Vector3> _path = new List<Vector3>();
 
@@ -42,8 +42,6 @@ public class FormationHandler : MonoBehaviour
     public Transform c2T;
     public Transform c1T;
 
-    public int SideStart = 0;
-    public int SideEnd = 0;
 
     public BaseFormation Formation
     {
@@ -123,8 +121,8 @@ public class FormationHandler : MonoBehaviour
         _centerOfMass = FindCenterOfMass(spawnedUnits);
 
         //find the furtherst unit from formation position 
-        if (DistancesFromUnitsToPoints.Count > 0)
-            _fartherestUnitIndex = FindFarUnitIndex();
+        //if (DistancesFromUnitsToPoints.Count > 0)
+           // _fartherestUnitIndex = FindFarUnitIndex();
 
         //formationTrans is used for calculating the steering path with circles
         if (_hasDestinationReached)
@@ -351,7 +349,7 @@ public class FormationHandler : MonoBehaviour
 
         //if the circles overlap scale down the circles
         var distance = Vector3.Distance(_c2, _c1);
-        if (distance < circleRadius)
+        if (distance < 2 * circleRadius)
         {
             leftC1 = Vector3.Scale(_c1, -Vector3.one);
             leftC2 = Vector3.Scale(_c2, -Vector3.one);
@@ -359,6 +357,9 @@ public class FormationHandler : MonoBehaviour
             _c1 = currentPosition + (leftC1 * circleRadius);
             _c2 = targetPosition + (leftC2 * circleRadius);
         }
+
+        var SideStart = 0;
+        var SideEnd = 0;
 
         if (leftC1 == RightPerp(tempCurrentDirection))
             SideStart = 1;
@@ -378,7 +379,7 @@ public class FormationHandler : MonoBehaviour
             //d is the intersection point between line c1,c2 and line c1_exit, c2_enter 
             float d = (_c2 - _c1).magnitude / 2;
             //angle 1
-            float a1 = Mathf.Acos(radius / d);
+            float a1 = Mathf.Acos(radius / (0.5f * d));
             //angle 2
             float a2 = Vector3.Angle(_c2, _c1);
             //angle 3
@@ -393,9 +394,9 @@ public class FormationHandler : MonoBehaviour
         else
         {
             if (SideStart == 1)
-                _c1_exitAngle = ToAngle(LeftPerp(Subtract(_c2, _c1)).normalized * circleRadius);
+                _c1_exitAngle = ToAngle(LeftPerp((Subtract(_c2, _c1)).normalized) * circleRadius);
             else
-                _c1_exitAngle = ToAngle(RightPerp(Subtract(_c2, _c1)).normalized * circleRadius);
+                _c1_exitAngle = ToAngle(RightPerp((Subtract(_c2, _c1)).normalized) * circleRadius);
 
         }
         //Calculate the ending cicle entry point
@@ -405,7 +406,7 @@ public class FormationHandler : MonoBehaviour
             //d is the intersection point between line c1,c2 and line c1_exit, c2_enter 
             float d = (_c2 - _c1).magnitude / 2;
             //angle 1
-            float b1 = Mathf.Acos(radius / d);
+            float b1 = Mathf.Acos(radius / (0.5f * d));
             //angle 2
             float b2 = Vector3.Angle(_c1, _c2);
             //angle 3
@@ -420,9 +421,9 @@ public class FormationHandler : MonoBehaviour
         else
         {
             if (SideStart == 1)
-                _c2_enterAngle = ToAngle(LeftPerp(Subtract(_c2, _c1)).normalized * circleRadius);
+                _c2_enterAngle = ToAngle(LeftPerp((Subtract(_c2, _c1)).normalized) * circleRadius);
             else
-                _c2_enterAngle = ToAngle(RightPerp(Subtract(_c2, _c1)).normalized * circleRadius);
+                _c2_enterAngle = ToAngle(RightPerp((Subtract(_c2, _c1)).normalized) * circleRadius);
         }
 
         //calculate points along the path
@@ -449,13 +450,13 @@ public class FormationHandler : MonoBehaviour
 
         Vector3 endVec = Subtract(_targetPosition, _c2);
 
-        float startAngle2 = _c2_enterAngle;
-        float endAngle2 = ToAngle(endVec);
+        startAngle = _c2_enterAngle;
+        endAngle = ToAngle(endVec);
 
         if (directionEnd == 0)
-            GeneratePath_Clockwise(startAngle2, endAngle2, _c2, _path);
+            GeneratePath_Clockwise(startAngle, endAngle, _c2, _path);
         else
-            GeneratePath_CounterClockwise(startAngle2, endAngle2, _c2, _path);
+            GeneratePath_CounterClockwise(startAngle, endAngle, _c2, _path);
 
     }
     private void GeneratePath_Clockwise(float startAngle, float endAngle, Vector3 center, List<Vector3> path)
@@ -535,12 +536,12 @@ public class FormationHandler : MonoBehaviour
     }
     private Vector3 RightPerp(Vector3 vector)
     {
-        var result1 = new Vector3(vector.x * -1, vector.y, vector.z);
+        var result1 = new Vector3(vector.z, vector.y, vector.x * -1);
         return result1;
     }
     private Vector3 LeftPerp(Vector3 vector)
     {
-        var result1 = new Vector3(vector.x, vector.y, vector.z * -1);
+        var result1 = new Vector3(-1 * vector.z, vector.y, vector.x);
         return result1;
     }
     private void OnDrawGizmos()
