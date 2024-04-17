@@ -61,7 +61,7 @@ public class FormationHandler : MonoBehaviour
 
     int pathIterator = 0;
     private float nextActionTime = 0.0f;
-    public float period = 0.1f;
+    public float period = 1f;
     public int PointIndexToMoveTo
     {
         get { return _PointIndexToMoveTo; }
@@ -122,7 +122,7 @@ public class FormationHandler : MonoBehaviour
 
         //find the furtherst unit from formation position 
         //if (DistancesFromUnitsToPoints.Count > 0)
-           // _fartherestUnitIndex = FindFarUnitIndex();
+        // _fartherestUnitIndex = FindFarUnitIndex();
 
         //formationTrans is used for calculating the steering path with circles
         if (_hasDestinationReached)
@@ -158,7 +158,7 @@ public class FormationHandler : MonoBehaviour
             if (agentTmp.enabled)
             {
                 //the fartherst unit
-                if (i == _fartherestUnitIndex)
+                /*if (i == _fartherestUnitIndex)
                 {
                     agentTmp.acceleration = 12f;
                     agentTmp.speed = 6f;
@@ -167,7 +167,7 @@ public class FormationHandler : MonoBehaviour
                 {
                     agentTmp.speed = 3f;
                     agentTmp.acceleration = 8f;
-                }
+                }*/
                 if (_isFighting && !agentTmp.GetComponent<ThrowObject>() && agentTmp.GetComponent<FieldOfView>().closestTarget)
                 {
                     agentTmp.SetDestination(agentTmp.GetComponent<FieldOfView>().closestTarget.transform.position);
