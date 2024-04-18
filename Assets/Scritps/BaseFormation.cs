@@ -16,5 +16,9 @@ public abstract class BaseFormation : MonoBehaviour
 
         return new Vector3(pNoise, 0, pNoise);
     }
+    public float GetSpread()
+    {
+        return Spread;
+    }
 
 }

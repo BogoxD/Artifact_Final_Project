@@ -39,6 +39,7 @@ public class FormationHandler : MonoBehaviour
     [Header("Debug")]
     private int _fartherestUnitIndex;
     private bool _isFighting;
+    bool follwingRows = false;
     public Transform c2T;
     public Transform c1T;
 
@@ -61,7 +62,7 @@ public class FormationHandler : MonoBehaviour
 
     int pathIterator = 0;
     private float nextActionTime = 0.0f;
-    public float period = 1f;
+    public float period = 0.5f;
     public int PointIndexToMoveTo
     {
         get { return _PointIndexToMoveTo; }
@@ -168,6 +169,12 @@ public class FormationHandler : MonoBehaviour
                     agentTmp.speed = 3f;
                     agentTmp.acceleration = 8f;
                 }*/
+
+                if (i >= Formation.GetFormationWidth())
+                {
+                    agentTmp.SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position -
+                        new Vector3(0, 0, Formation.GetSpread()));
+                }
                 if (_isFighting && !agentTmp.GetComponent<ThrowObject>() && agentTmp.GetComponent<FieldOfView>().closestTarget)
                 {
                     agentTmp.SetDestination(agentTmp.GetComponent<FieldOfView>().closestTarget.transform.position);
@@ -188,28 +195,14 @@ public class FormationHandler : MonoBehaviour
 
             unitPositions[i] += point;
 
-            agent.SetDestination(unitPositions[i]);
-            //spawnedUnits[i].transform.position = unitPositions[i];
+            //agent.SetDestination(unitPositions[i]);
             //COMMENT OUT THE MOVEMENT FOR NOW
 
             //first row of the formation
-            /* if (i < Formation.GetFormationWidth())
-             {
-                 agent.SetDestination(unitPositions[i]);
-             }
-             else
-             {
-                 if (spawnedUnits[i - Formation.GetFormationDepth()].magnitude == 0)
-                 {
-                     agent.SetDestination(unitPositions[i]);
-                 }
-                 else
-                 {
-                     //delete Vector3.one later
-                     agent.SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position - Vector3.one);
-                 }
-             }
-             */
+            if (i < Formation.GetFormationWidth())
+            {
+                agent.SetDestination(unitPositions[i]);
+            }
         }
 
     }
