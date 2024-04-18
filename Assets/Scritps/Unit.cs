@@ -62,7 +62,7 @@ public class Unit : MonoBehaviour
             if (velocity.x <= 0 && velocity.z <= 0)
             {
                 //make unit rotate twards parent forward 
-                transform.rotation = Quaternion.Lerp(transform.rotation, transform.parent.rotation, Time.deltaTime);
+                //transform.rotation = Quaternion.Lerp(transform.rotation, transform.parent.rotation, Time.deltaTime);
 
                 navAgent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
                 navAgent.avoidancePriority = 20;
