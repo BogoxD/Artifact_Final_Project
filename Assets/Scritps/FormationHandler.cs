@@ -61,8 +61,8 @@ public class FormationHandler : MonoBehaviour
     private int _PointIndexToMoveTo = 0;
 
     int pathIterator = 0;
-    private float nextActionTime = 0.0f;
-    public float period = 0.5f;
+    private float nextActionTime = 0.5f;
+    public float period = 1f;
     public int PointIndexToMoveTo
     {
         get { return _PointIndexToMoveTo; }
@@ -112,8 +112,11 @@ public class FormationHandler : MonoBehaviour
 
             if (PointIndexToMoveTo > -1 && movingPoints.Length > 0 && _path.Count > 2 && pathIterator < _path.Count - 1)
             {
-                MoveUnits(_path[pathIterator]);
-                pathIterator++;
+                if (NextPathPos())
+                {
+                    MoveUnits(_path[pathIterator]);
+                    pathIterator++;
+                }
             }
         }
 
@@ -158,18 +161,6 @@ public class FormationHandler : MonoBehaviour
 
             if (agentTmp.enabled)
             {
-                //the fartherst unit
-                /*if (i == _fartherestUnitIndex)
-                {
-                    agentTmp.acceleration = 12f;
-                    agentTmp.speed = 6f;
-                }
-                else
-                {
-                    agentTmp.speed = 3f;
-                    agentTmp.acceleration = 8f;
-                }*/
-
                 if (i >= Formation.GetFormationWidth())
                 {
                     agentTmp.SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position -
@@ -186,6 +177,27 @@ public class FormationHandler : MonoBehaviour
     public Vector3 GetTargetPos()
     {
         return _targetPosition;
+    }
+    public bool NextPathPos()
+    {
+        int j = 0;
+
+        for (int i = 0; i < spawnedUnits.Count; i++)
+        {
+            Unit agent = spawnedUnits[i].GetComponent<Unit>();
+
+            if (agent)
+            {
+                if (agent.magnitude <= 2.5)
+                {
+                    j++;
+                }
+            }
+        }
+        if (j == spawnedUnits.Count)
+            return true;
+        else
+            return false;
     }
     public void MoveUnits(Vector3 point)
     {

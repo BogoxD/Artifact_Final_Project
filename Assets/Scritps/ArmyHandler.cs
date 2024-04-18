@@ -50,9 +50,8 @@ public class ArmyHandler : MonoBehaviour
             var formHandler = spawnedFormations[i].GetComponent<FormationHandler>();
             formHandler.SetUnitPositions(formationPositions[i]);
 
-            formationPositions[i] = formHandler.FindCenterOfMass(formHandler.spawnedUnits);
+            //formationPositions[i] = formHandler.FindCenterOfMass(formHandler.spawnedUnits);
             spawnedFormations[i].transform.position = Vector3.MoveTowards(spawnedFormations[i].transform.position, formationPositions[i], 0f).normalized;
-            spawnedFormations[i].transform.position = spawnedFormations[i].transform.position.normalized;
         }
     }
     public void MoveArmy(Transform point)
