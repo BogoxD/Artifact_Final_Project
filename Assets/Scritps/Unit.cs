@@ -95,4 +95,12 @@ public class Unit : MonoBehaviour
     {
         return currentHealth;
     }
+    public void SetAcceleratation(float ammount)
+    {
+        navAgent.acceleration = ammount;
+    }
+    public void SetSpeed(float ammount)
+    {
+        navAgent.speed = ammount;
+    }
 }

@@ -10,25 +10,27 @@ public class FormationHandler : MonoBehaviour
 
     private BaseFormation _formation;
     [Header("Steering")]
-
     [SerializeField] float _avarageSpeed;
     [SerializeField] private bool _hasDestinationReached;
     [SerializeField] Transform _currentTransform;
     [SerializeField] float _circleRadius;
+    
     // Centers of the two circles used for generating the path
     Vector3 _c1 = new();
     Vector3 _c2 = new();
+    
     // Angles where the path separates from c1, and where it joins c2
     float _c1_exitAngle = 0;
     float _c2_enterAngle = 0;
+    
     // How far to go around the circles when generating the points on the path
     float _angleStep = ((5f / 180f) * Mathf.PI);
+    
     //path
     [SerializeField] List<Vector3> _path = new List<Vector3>();
 
     private Vector3 _targetPosition;
     private Vector3 _targetDir;
-
     private Vector3 _centerOfMass = new();
 
     [Header("GameObjects")]
@@ -36,13 +38,19 @@ public class FormationHandler : MonoBehaviour
     private Vector3 _formationPoint;
     [HideInInspector] public List<float> DistancesFromUnitsToPoints;
 
+    //Formation State
+    private enum FormationState
+    {
+        Stationary,
+        Moving,
+        Fighting
+    }
+    private FormationState state;
+
     [Header("Debug")]
-    private int _fartherestUnitIndex;
     private bool _isFighting;
-    bool follwingRows = false;
     public Transform c2T;
     public Transform c1T;
-
 
     public BaseFormation Formation
     {
@@ -87,7 +95,7 @@ public class FormationHandler : MonoBehaviour
                 _path.Clear();
                 pathIterator = 0;
                 CalculateSteeringPath(_currentTransform.position, _currentTransform.forward, _targetPosition, _targetDir,
-                    _circleRadius); ;
+                    _circleRadius);
             }
         }
     }
@@ -105,6 +113,12 @@ public class FormationHandler : MonoBehaviour
     {
         //Update formation
         SetUpFormation();
+
+        //Update formation state
+        if (_avarageSpeed < 0.5)
+            state = FormationState.Stationary;
+        else
+            state = FormationState.Moving;
 
         if (Time.time > nextActionTime)
         {
@@ -124,10 +138,6 @@ public class FormationHandler : MonoBehaviour
         _currentTransform.forward = GetFormationDirection();
         _centerOfMass = FindCenterOfMass(spawnedUnits);
 
-        //find the furtherst unit from formation position 
-        //if (DistancesFromUnitsToPoints.Count > 0)
-        // _fartherestUnitIndex = FindFarUnitIndex();
-
         //formationTrans is used for calculating the steering path with circles
         if (_hasDestinationReached)
         {
@@ -136,12 +146,13 @@ public class FormationHandler : MonoBehaviour
             _targetDir = _currentTransform.forward;
         }
 
-        _hasDestinationReached = HasReachedDestination(spawnedUnits);
+        _hasDestinationReached = HasReachedDestination();
         DistancesFromUnitsToPoints = CalculateDistanceFromUnitToPoint(spawnedUnits, unitPositions);
     }
     void SetUpFormation()
     {
         unitPositions = Formation.EvaluatePositions(_formationPoint).ToList();
+
         //add units to formation
         if (unitPositions.Count > spawnedUnits.Count)
         {
@@ -161,43 +172,28 @@ public class FormationHandler : MonoBehaviour
 
             if (agentTmp.enabled)
             {
-                if (i >= Formation.GetFormationWidth())
+                //Slow down units if another falls behind
+                //SlowDownFormation();
+
+                //if(state != FormationState.Moving)
+                //agentTmp.transform.position = Vector3.MoveTowards(agentTmp.transform.position, unitPositions[i], 5f * Time.deltaTime);
+
+                if (i >= Formation.GetFormationDepth())
                 {
                     agentTmp.SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position -
-                        new Vector3(0, 0, Formation.GetSpread()));
+                       new Vector3(0, 0, Formation.GetSpread()));
                 }
                 if (_isFighting && !agentTmp.GetComponent<ThrowObject>() && agentTmp.GetComponent<FieldOfView>().closestTarget)
                 {
                     agentTmp.SetDestination(agentTmp.GetComponent<FieldOfView>().closestTarget.transform.position);
                 }
             }
-            _hasDestinationReached = HasReachedDestination(spawnedUnits);
+            _hasDestinationReached = HasReachedDestination();
         }
     }
     public Vector3 GetTargetPos()
     {
         return _targetPosition;
-    }
-    public bool NextPathPos()
-    {
-        int j = 0;
-
-        for (int i = 0; i < spawnedUnits.Count; i++)
-        {
-            Unit agent = spawnedUnits[i].GetComponent<Unit>();
-
-            if (agent)
-            {
-                if (agent.magnitude <= 2.5)
-                {
-                    j++;
-                }
-            }
-        }
-        if (j == spawnedUnits.Count)
-            return true;
-        else
-            return false;
     }
     public void MoveUnits(Vector3 point)
     {
@@ -211,7 +207,7 @@ public class FormationHandler : MonoBehaviour
             //COMMENT OUT THE MOVEMENT FOR NOW
 
             //first row of the formation
-            if (i < Formation.GetFormationWidth())
+            if (i < Formation.GetFormationDepth())
             {
                 agent.SetDestination(unitPositions[i]);
             }
@@ -248,21 +244,6 @@ public class FormationHandler : MonoBehaviour
         }
         return distancesFromUnitToPoint;
     }
-    int FindFarUnitIndex()
-    {
-        float val = DistancesFromUnitsToPoints[0];
-        int index = 0;
-
-        for (int i = 1; i < DistancesFromUnitsToPoints.Count; i++)
-        {
-            if (val < DistancesFromUnitsToPoints[i])
-            {
-                val = DistancesFromUnitsToPoints[i];
-                index = i;
-            }
-        }
-        return index;
-    }
     public Vector3 FindCenterOfMass(List<Unit> spawnedUnits)
     {
         var totalX = 0f;
@@ -277,7 +258,7 @@ public class FormationHandler : MonoBehaviour
 
         return new Vector3(centerX, 0, centerZ);
     }
-    bool HasReachedDestination(List<Unit> spawnedUnits)
+    bool HasReachedDestination()
     {
         int j = 0;
 
@@ -288,6 +269,27 @@ public class FormationHandler : MonoBehaviour
             if (agent)
             {
                 if (agent.magnitude == 0)
+                {
+                    j++;
+                }
+            }
+        }
+        if (j == spawnedUnits.Count)
+            return true;
+        else
+            return false;
+    }
+    public bool NextPathPos()
+    {
+        int j = 0;
+
+        for (int i = 0; i < spawnedUnits.Count; i++)
+        {
+            Unit agent = spawnedUnits[i].GetComponent<Unit>();
+
+            if (agent)
+            {
+                if (agent.magnitude <= 2.5)
                 {
                     j++;
                 }
@@ -314,6 +316,39 @@ public class FormationHandler : MonoBehaviour
             var unit = spawnedUnits.Last();
             spawnedUnits.Remove(unit.GetComponent<Unit>());
             Destroy(unit.gameObject);
+        }
+    }
+    void SetFormationSpeed(float speed, float acceleration)
+    {
+        for (int i = 0; i < spawnedUnits.Count; i++)
+        {
+            Unit agentTmp = spawnedUnits[i].GetComponent<Unit>();
+
+            agentTmp.SetAcceleratation(acceleration);
+            agentTmp.SetSpeed(speed);
+        }
+    }
+    void SlowDownFormation()
+    {
+        bool once = true;
+
+        foreach (Unit unitTmp in spawnedUnits)
+        {
+            if (Vector3.Distance(unitTmp.transform.position, _centerOfMass) > 4f)
+            {
+                if (once)
+                {
+                    SetFormationSpeed(1.5f, 4f);
+                    once = false;
+                }
+                
+                unitTmp.SetSpeed(3f);
+            }
+            else
+            {
+                SetFormationSpeed(3, 8);
+                once = true;
+            }
         }
     }
 
