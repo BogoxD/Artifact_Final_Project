@@ -41,11 +41,12 @@ public class FormationHandler : MonoBehaviour
     //Formation State
     private enum FormationState
     {
-        Stationary,
-        Moving,
+        Steering,
+        MovingToPositions,
+        Idle,
         Fighting
     }
-    private FormationState state;
+    [SerializeField] private FormationState state = FormationState.Idle;
 
     [Header("Debug")]
     private bool _isFighting;
@@ -71,6 +72,7 @@ public class FormationHandler : MonoBehaviour
     int pathIterator = 0;
     private float nextActionTime = 0.5f;
     public float period = 1f;
+
     public int PointIndexToMoveTo
     {
         get { return _PointIndexToMoveTo; }
@@ -86,6 +88,10 @@ public class FormationHandler : MonoBehaviour
 
 
                 Debug.Log("calculateing Steering");
+
+                //set formation state
+                state = FormationState.Steering;
+
                 //setup variables before calculating path
                 _targetPosition = movingPoints[_PointIndexToMoveTo].transform.position;
                 _targetDir = movingPoints[_PointIndexToMoveTo].transform.forward;
@@ -113,12 +119,9 @@ public class FormationHandler : MonoBehaviour
     {
         //Update formation
         SetUpFormation();
-        
-        //Update formation state
-        if (_avarageSpeed < 0.5)
-            state = FormationState.Stationary;
-        else
-            state = FormationState.Moving;
+
+        if (HasFinishedPath())
+            state = FormationState.Idle;
 
         if (Time.time > nextActionTime)
         {
@@ -126,7 +129,7 @@ public class FormationHandler : MonoBehaviour
 
             if (PointIndexToMoveTo > -1 && movingPoints.Length > 0 && _path.Count > 2 && pathIterator < _path.Count - 1)
             {
-                if (NextPathPos())
+                if (NextPathPos() && state == FormationState.Steering)
                 {
                     MoveUnits(_path[pathIterator]);
                     pathIterator++;
@@ -175,8 +178,11 @@ public class FormationHandler : MonoBehaviour
             {
                 //Slow down units if another falls behind
                 //SlowDownFormation();
-
-                MoveUnitsToPositions();
+                if (state != FormationState.Steering)
+                {
+                    state = FormationState.MovingToPositions;
+                    MoveUnitsToPositions();
+                }
 
                 if (_isFighting && !agentTmp.GetComponent<ThrowObject>() && agentTmp.GetComponent<FieldOfView>().closestTarget)
                 {
@@ -362,6 +368,14 @@ public class FormationHandler : MonoBehaviour
 
         direction /= spawnedUnits.Count;
         return direction.normalized;
+    }
+    private bool HasFinishedPath()
+    {
+        if (pathIterator == _path.Count)
+            return true;
+        else
+            return false;
+
     }
     private void CalculateSteeringPath(Vector3 currentPosition, Vector3 currentDirection, Vector3 targetPosition, Vector3 targetDirection, float circleRadius)
     {

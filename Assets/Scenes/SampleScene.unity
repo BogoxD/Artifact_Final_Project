@@ -2388,6 +2388,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5015159480054624925, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+      propertyPath: state
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015159480054624925, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
       propertyPath: period
       value: 0.3
       objectReference: {fileID: 0}
