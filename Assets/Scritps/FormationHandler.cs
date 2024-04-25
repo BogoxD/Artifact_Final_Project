@@ -14,18 +14,18 @@ public class FormationHandler : MonoBehaviour
     [SerializeField] private bool _hasDestinationReached;
     [SerializeField] Transform _currentTransform;
     [SerializeField] float _circleRadius;
-    
+
     // Centers of the two circles used for generating the path
     Vector3 _c1 = new();
     Vector3 _c2 = new();
-    
+
     // Angles where the path separates from c1, and where it joins c2
     float _c1_exitAngle = 0;
     float _c2_enterAngle = 0;
-    
+
     // How far to go around the circles when generating the points on the path
     float _angleStep = ((5f / 180f) * Mathf.PI);
-    
+
     //path
     [SerializeField] List<Vector3> _path = new List<Vector3>();
 
@@ -113,7 +113,7 @@ public class FormationHandler : MonoBehaviour
     {
         //Update formation
         SetUpFormation();
-
+        
         //Update formation state
         if (_avarageSpeed < 0.5)
             state = FormationState.Stationary;
@@ -170,19 +170,14 @@ public class FormationHandler : MonoBehaviour
             NavMeshAgent agentTmp = spawnedUnits[i].GetNavMeshAgent();
             _isFighting = agentTmp.GetComponent<FieldOfView>().canSeeEnemy;
 
+
             if (agentTmp.enabled)
             {
                 //Slow down units if another falls behind
                 //SlowDownFormation();
 
-                //if(state != FormationState.Moving)
-                //agentTmp.transform.position = Vector3.MoveTowards(agentTmp.transform.position, unitPositions[i], 5f * Time.deltaTime);
+                MoveUnitsToPositions();
 
-                if (i >= Formation.GetFormationDepth())
-                {
-                    agentTmp.SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position -
-                       new Vector3(0, 0, Formation.GetSpread()));
-                }
                 if (_isFighting && !agentTmp.GetComponent<ThrowObject>() && agentTmp.GetComponent<FieldOfView>().closestTarget)
                 {
                     agentTmp.SetDestination(agentTmp.GetComponent<FieldOfView>().closestTarget.transform.position);
@@ -200,19 +195,19 @@ public class FormationHandler : MonoBehaviour
         for (int i = 0; i < spawnedUnits.Count; i++)
         {
             NavMeshAgent agent = spawnedUnits[i].GetComponent<NavMeshAgent>();
-
             unitPositions[i] += point;
 
-            //agent.SetDestination(unitPositions[i]);
-            //COMMENT OUT THE MOVEMENT FOR NOW
-
-            //first row of the formation
-            if (i < Formation.GetFormationDepth())
-            {
-                agent.SetDestination(unitPositions[i]);
-            }
+            agent.SetDestination(unitPositions[i]);
         }
 
+    }
+    public void MoveUnitsToPositions()
+    {
+        for(int i = 0; i < spawnedUnits.Count; i++)
+        {
+            NavMeshAgent agentTmp = spawnedUnits[i].GetComponent<NavMeshAgent>();
+            agentTmp.SetDestination(unitPositions[i]);
+        }
     }
     public void SetUnitPositions(Vector3 point)
     {
@@ -341,7 +336,7 @@ public class FormationHandler : MonoBehaviour
                     SetFormationSpeed(1.5f, 4f);
                     once = false;
                 }
-                
+
                 unitTmp.SetSpeed(3f);
             }
             else

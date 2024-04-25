@@ -29,6 +29,8 @@ public class BoxFormation : BaseFormation
 
                 pos += transform.position;
 
+                pos += transform.eulerAngles;
+
 
                 yield return pos;
 
