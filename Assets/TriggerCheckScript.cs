@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class TriggerCheckScript : MonoBehaviour
 {
-    Unit unit;
+    //INITIALY USED FOR COMBAT
+    /* Unit unit;
 
     private void Start()
     {
@@ -18,4 +19,5 @@ public class TriggerCheckScript : MonoBehaviour
             unit.DamageUnit(Random.Range(20, 30), unit);
         }
     }
+    */
 }

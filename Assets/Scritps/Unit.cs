@@ -26,7 +26,6 @@ public class Unit : MonoBehaviour
         navAgent = GetComponent<NavMeshAgent>();
         currentHealth = maxHealth;
         rb.isKinematic = true;
-        Invoke(nameof(ResetKinematicStatus), 2f);
     }
 
     public NavMeshAgent GetNavMeshAgent()

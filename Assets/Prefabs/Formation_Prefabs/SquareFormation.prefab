@@ -195,21 +195,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _avarageSpeed: 0
   _hasDestinationReached: 0
-  _currentTransform: {fileID: 1828848670}
+  _currentTransformDirection: {fileID: 1828848670}
   _circleRadius: 7
   _path: []
   _unitPrefab: {fileID: 4078945737046587363, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
   DistancesFromUnitsToPoints: []
+  state: 2
   c2T: {fileID: 2128499130}
   c1T: {fileID: 78699901}
-  SideStart: 0
-  SideEnd: 0
   spawnedUnits: []
   unitPositions: []
   movingPoints:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  period: 0.3
 --- !u!114 &5015159480054624923
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,6 +224,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Spread: 2
   noise: 0
-  width: 3
-  depth: 3
+  width: 4
+  depth: 4
   hollow: 0

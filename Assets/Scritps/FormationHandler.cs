@@ -12,7 +12,7 @@ public class FormationHandler : MonoBehaviour
     [Header("Steering")]
     [SerializeField] float _avarageSpeed;
     [SerializeField] private bool _hasDestinationReached;
-    [SerializeField] Transform _currentTransform;
+    [SerializeField] Transform _currentTransformDirection;
     [SerializeField] float _circleRadius;
 
     // Centers of the two circles used for generating the path
@@ -34,6 +34,7 @@ public class FormationHandler : MonoBehaviour
     private Vector3 _centerOfMass = new();
 
     [Header("GameObjects")]
+
     [SerializeField] private GameObject _unitPrefab;
     private Vector3 _formationPoint;
     [HideInInspector] public List<float> DistancesFromUnitsToPoints;
@@ -49,9 +50,10 @@ public class FormationHandler : MonoBehaviour
     [SerializeField] private FormationState state = FormationState.Idle;
 
     [Header("Debug")]
+
     private bool _isFighting;
-    public Transform c2T;
-    public Transform c1T;
+    [SerializeField] private Transform c2T;
+    [SerializeField] private Transform c1T;
 
     public BaseFormation Formation
     {
@@ -96,11 +98,11 @@ public class FormationHandler : MonoBehaviour
                 _targetPosition = movingPoints[_PointIndexToMoveTo].transform.position;
                 _targetDir = movingPoints[_PointIndexToMoveTo].transform.forward;
 
-                _currentTransform.position = _centerOfMass;
+                _currentTransformDirection.position = _centerOfMass;
 
                 _path.Clear();
                 pathIterator = 0;
-                CalculateSteeringPath(_currentTransform.position, _currentTransform.forward, _targetPosition, _targetDir,
+                CalculateSteeringPath(_currentTransformDirection.position, _currentTransformDirection.forward, _targetPosition, _targetDir,
                     _circleRadius);
             }
         }
@@ -112,8 +114,8 @@ public class FormationHandler : MonoBehaviour
         if (transform.parent)
             parentArmy = transform.parent.GetComponent<ArmyHandler>();
 
-        _currentTransform.position = transform.position;
-        _currentTransform.forward = transform.forward;
+        _currentTransformDirection.position = transform.position;
+        _currentTransformDirection.forward = transform.forward;
     }
     void FixedUpdate()
     {
@@ -138,15 +140,15 @@ public class FormationHandler : MonoBehaviour
         }
 
         _avarageSpeed = ReturnAvarageSpeed(spawnedUnits);
-        _currentTransform.forward = GetFormationDirection();
+        _currentTransformDirection.forward = GetFormationDirection();
         _centerOfMass = FindCenterOfMass(spawnedUnits);
 
         //formationTrans is used for calculating the steering path with circles
         if (_hasDestinationReached)
         {
-            _currentTransform.position = _centerOfMass;
-            _targetPosition = _currentTransform.position;
-            _targetDir = _currentTransform.forward;
+            _currentTransformDirection.position = _centerOfMass;
+            _targetPosition = _currentTransformDirection.position;
+            _targetDir = _currentTransformDirection.forward;
         }
 
         _hasDestinationReached = HasReachedDestination();
@@ -209,7 +211,7 @@ public class FormationHandler : MonoBehaviour
     }
     public void MoveUnitsToPositions()
     {
-        for(int i = 0; i < spawnedUnits.Count; i++)
+        for (int i = 0; i < spawnedUnits.Count; i++)
         {
             NavMeshAgent agentTmp = spawnedUnits[i].GetComponent<NavMeshAgent>();
             agentTmp.SetDestination(unitPositions[i]);
@@ -377,6 +379,11 @@ public class FormationHandler : MonoBehaviour
             return false;
 
     }
+    private void FormationBand()
+    {
+        //set position of first row
+
+    }
     private void CalculateSteeringPath(Vector3 currentPosition, Vector3 currentDirection, Vector3 targetPosition, Vector3 targetDirection, float circleRadius)
     {
         Vector3 dirVec = (targetPosition - currentPosition).normalized;
@@ -485,7 +492,7 @@ public class FormationHandler : MonoBehaviour
         Vector3 xVec = new Vector3(1, 0, 0);
         Vector3 zVec = new Vector3(0, 0, 1);
 
-        Vector3 startVec = Subtract(_currentTransform.position, _c1);
+        Vector3 startVec = Subtract(_currentTransformDirection.position, _c1);
 
         float startAngle = ToAngle(startVec);
         float endAngle = _c1_exitAngle;
@@ -604,11 +611,13 @@ public class FormationHandler : MonoBehaviour
 
         Color gizmoreResetColor = Gizmos.color;
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(c1T.position, _circleRadius);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(c2T.position, _circleRadius);
-
+        if (c1T && c2T)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(c1T.position, _circleRadius);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(c2T.position, _circleRadius);
+        }
         Gizmos.color = gizmoreResetColor;
 
         //Gizmos.DrawWireSphere();
