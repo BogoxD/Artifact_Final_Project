@@ -149,11 +149,11 @@ public class FormationHandler : MonoBehaviour
 
             if (PointIndexToMoveTo > -1 && movingPoints.Length > 0 && _path.Count > 2 && pathIterator < _path.Count - 1)
             {
-                if (NextPathPos() && state == FormationState.Steering)
+                if (NextPathPos() && state != FormationState.SlowingDown)
                 {
                     MoveUnits(_path[pathIterator]);
+                    
                     pathIterator++;
-
                     _PointIndexPrevious = PointIndexToMoveTo;
                 }
             }
