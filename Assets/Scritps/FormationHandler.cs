@@ -149,7 +149,7 @@ public class FormationHandler : MonoBehaviour
 
             if (PointIndexToMoveTo > -1 && movingPoints.Length > 0 && _path.Count > 2 && pathIterator < _path.Count - 1)
             {
-                if (NextPathPos() && state != FormationState.SlowingDown)
+                if (NextPathPos() && state == FormationState.Steering)
                 {
                     MoveUnits(_path[pathIterator]);
                     
@@ -174,7 +174,7 @@ public class FormationHandler : MonoBehaviour
         else
         {
             //slow down formation if units fall behind
-            SlowDownFormation(_spawnedUnits2DArray);
+            //SlowDownFormation(_spawnedUnits2DArray);
 
             for (int i = 0; i < spawnedUnits.Count; i++)
             {
@@ -330,7 +330,7 @@ public class FormationHandler : MonoBehaviour
 
             if (agent)
             {
-                if (agent.magnitude <= 2.5 || _PointIndexPrevious != _PointIndexToMoveTo)
+                if (agent.magnitude < 2.5 || _PointIndexPrevious != _PointIndexToMoveTo)
                 {
                     j++;
                 }
@@ -380,7 +380,7 @@ public class FormationHandler : MonoBehaviour
                     //change formation state
                     state = FormationState.SlowingDown;
 
-                    //if (0 > Vector3.Dot(spawnedUnits2DArray[i, j].transform.position.normalized, _currentDirectionTransform.right.normalized))
+                    if (0 >= Vector3.Dot(spawnedUnits2DArray[i, j].transform.position.normalized, _currentDirectionTransform.right.normalized))
                     {
                         spawnedUnits2DArray[i, j].SetSpeed(5);
                     }
@@ -388,7 +388,7 @@ public class FormationHandler : MonoBehaviour
                     foreach (Unit unitTmp in spawnedUnits)
                     {
                         if (spawnedUnits2DArray[i, j] != unitTmp)
-                            unitTmp.SetSpeed(2f);
+                            unitTmp.SetSpeed(2.5f);
                     }
                 }
                 else
