@@ -195,7 +195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _avarageSpeed: 0
   _hasDestinationReached: 0
-  _currentTransformDirection: {fileID: 8363948998804096946}
+  _currentDirectionTransform: {fileID: 8363948998804096946}
   _circleRadius: 0
   _path: []
   _unitPrefab: {fileID: 3316376772576343486, guid: e5fd788adcff1c8499c8d0539c0772b7, type: 3}

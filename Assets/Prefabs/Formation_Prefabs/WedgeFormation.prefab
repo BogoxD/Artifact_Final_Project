@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &746765122422774046
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5679892282919847197}
+  m_Layer: 0
+  m_Name: C1T
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5679892282919847197
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746765122422774046}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8364858752134576502}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6974665563770364992
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,6 +61,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8364858752134576502}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7670678687546098860
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7430338588397778157}
+  m_Layer: 0
+  m_Name: C2T
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7430338588397778157
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7670678687546098860}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8364858752134576502}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8364858752134576497
 GameObject:
@@ -64,6 +126,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1190166625120054873}
+  - {fileID: 5679892282919847197}
+  - {fileID: 7430338588397778157}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -129,22 +193,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a3b37da07628b34d8d5dd3fc364fbcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  move1: 0
-  move2: 0
-  move3: 0
-  avarageSpeed: 0
-  hasDestinationReached: 0
-  formationTrans: {fileID: 1190166625120054873}
-  circleRadius: 0
-  unitPrefab: {fileID: 4078945737046587363, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
-  distancesFromUnitsToPoints: []
-  c2T: {fileID: 0}
-  c1T: {fileID: 0}
-  sideStart: 0
-  sideEnd: 0
+  _avarageSpeed: 0
+  _hasDestinationReached: 0
+  _currentDirectionTransform: {fileID: 1190166625120054873}
+  _circleRadius: 0
+  _path: []
+  _unitPrefab: {fileID: 4078945737046587363, guid: 04c654799e90baf46b9f0324f762b75e, type: 3}
+  DistancesFromUnitsToPoints: []
+  state: 2
+  c2T: {fileID: 7430338588397778157}
+  c1T: {fileID: 5679892282919847197}
   spawnedUnits: []
   unitPositions: []
   movingPoints: []
+  period: 1
 --- !u!114 &8364858752134576503
 MonoBehaviour:
   m_ObjectHideFlags: 0

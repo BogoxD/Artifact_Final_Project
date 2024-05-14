@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(FormationHandler))]
 public class RadialFormation : BaseFormation
 {
     [SerializeField] [Range(0,40)] private int ammount = 10;

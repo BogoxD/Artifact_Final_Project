@@ -102,4 +102,8 @@ public class Unit : MonoBehaviour
     {
         navAgent.speed = ammount;
     }
+    public float GetUnitRadius()
+    {
+        return gameObject.GetComponent<CapsuleCollider>().radius;
+    }
 }

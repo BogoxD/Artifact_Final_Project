@@ -6,13 +6,11 @@ using UnityEngine;
 
 public class FormationHandler : MonoBehaviour
 {
-
-
     private BaseFormation _formation;
     [Header("Steering")]
     [SerializeField] float _avarageSpeed;
     [SerializeField] private bool _hasDestinationReached;
-    [SerializeField] Transform _currentTransformDirection;
+    [SerializeField] Transform _currentDirectionTransform;
     [SerializeField] float _circleRadius;
 
     // Centers of the two circles used for generating the path
@@ -32,6 +30,9 @@ public class FormationHandler : MonoBehaviour
     private Vector3 _targetPosition;
     private Vector3 _targetDir;
     private Vector3 _centerOfMass = new();
+    private float _unitRadius;
+
+    private int _lastTurnDir;
 
     [Header("GameObjects")]
 
@@ -68,6 +69,7 @@ public class FormationHandler : MonoBehaviour
     private ArmyHandler parentArmy;
     [HideInInspector] public List<Unit> spawnedUnits = new List<Unit>();
     [HideInInspector] public List<Vector3> unitPositions = new List<Vector3>();
+    private Unit[,] spawnedUnits2DArray;
     public GameObject[] movingPoints;
     private int _PointIndexToMoveTo = 0;
 
@@ -97,13 +99,18 @@ public class FormationHandler : MonoBehaviour
                 //setup variables before calculating path
                 _targetPosition = movingPoints[_PointIndexToMoveTo].transform.position;
                 _targetDir = movingPoints[_PointIndexToMoveTo].transform.forward;
+                _unitRadius = spawnedUnits[0].GetUnitRadius();
 
-                _currentTransformDirection.position = _centerOfMass;
+                _currentDirectionTransform.position = _centerOfMass;
 
                 _path.Clear();
                 pathIterator = 0;
-                CalculateSteeringPath(_currentTransformDirection.position, _currentTransformDirection.forward, _targetPosition, _targetDir,
+                CalculateSteeringPath(_currentDirectionTransform.position, _currentDirectionTransform.forward, _targetPosition, _targetDir,
                     _circleRadius);
+
+                //to be fixed
+                //Unit[,] array = ConvertTo2DArray(spawnedUnits.ToArray(), Formation.GetFormationDepth(), Formation.GetFormationWidth());
+                //FormationBand(_currentDirectionTransform.position, _currentDirectionTransform.forward, array);
             }
         }
     }
@@ -114,8 +121,9 @@ public class FormationHandler : MonoBehaviour
         if (transform.parent)
             parentArmy = transform.parent.GetComponent<ArmyHandler>();
 
-        _currentTransformDirection.position = transform.position;
-        _currentTransformDirection.forward = transform.forward;
+        _currentDirectionTransform.position = transform.position;
+        _currentDirectionTransform.forward = transform.forward;
+
     }
     void FixedUpdate()
     {
@@ -140,15 +148,15 @@ public class FormationHandler : MonoBehaviour
         }
 
         _avarageSpeed = ReturnAvarageSpeed(spawnedUnits);
-        _currentTransformDirection.forward = GetFormationDirection();
+        _currentDirectionTransform.forward = GetFormationDirection();
         _centerOfMass = FindCenterOfMass(spawnedUnits);
 
         //formationTrans is used for calculating the steering path with circles
         if (_hasDestinationReached)
         {
-            _currentTransformDirection.position = _centerOfMass;
-            _targetPosition = _currentTransformDirection.position;
-            _targetDir = _currentTransformDirection.forward;
+            _currentDirectionTransform.position = _centerOfMass;
+            _targetPosition = _currentDirectionTransform.position;
+            _targetDir = _currentDirectionTransform.forward;
         }
 
         _hasDestinationReached = HasReachedDestination();
@@ -157,7 +165,6 @@ public class FormationHandler : MonoBehaviour
     void SetUpFormation()
     {
         unitPositions = Formation.EvaluatePositions(_formationPoint).ToList();
-
         //add units to formation
         if (unitPositions.Count > spawnedUnits.Count)
         {
@@ -354,11 +361,24 @@ public class FormationHandler : MonoBehaviour
             }
         }
     }
+    private static Unit[,] ConvertTo2DArray(Unit[] array, int height, int width)
+    {
+        Unit[,] output = new Unit[height, width];
+
+        for(int i = 0; i < height; i++)
+        {
+            for(int j = 0; j < width; j++)
+            {
+                output[i, j] = array[i * width + j];
+            }
+        }
+        return output;
+    }
 
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
-    //STEERING
+    //STEERING FORMATION
     private Vector3 GetFormationDirection()
     {
         Vector3 direction = new Vector3();
@@ -379,10 +399,86 @@ public class FormationHandler : MonoBehaviour
             return false;
 
     }
-    private void FormationBand()
+    private void FormationBand(Vector3 currentPosition, Vector3 currentDirection, Unit[,] spawnedUnitsArray)
     {
         //set position of first row
+        Vector3 rootPos = currentPosition + LeftPerp(currentDirection) * (((Formation.GetFormationDepth() - 1) * _unitRadius * 2) / 2);
 
+        for (int c = 0; c < Formation.GetFormationWidth(); c++)
+        {
+            spawnedUnitsArray[0,c].transform.position = rootPos + RightPerp(currentDirection) * (2 * c * _unitRadius);
+        }
+
+        var prevRowDir = currentDirection.normalized;
+
+        //move the followers in the specified manner
+        for (int r = 1; r < Formation.GetFormationDepth(); r++)
+        {
+            //determine if the row ahead is going left or right
+            var leaderPos = spawnedUnitsArray[r - 1, 0].transform.position;
+            var unitPos = spawnedUnitsArray[r, 0].transform.position;
+
+            var currentRowDir = Subtract(leaderPos, unitPos).normalized;
+            var dotResult = Vector3.Dot(RightPerp(currentRowDir), prevRowDir);
+
+            var turnDir = 0;
+            if (dotResult > 0.05)
+                turnDir = 1;
+            else if (dotResult < -0.05)
+                turnDir = -1;
+            if (_lastTurnDir != 0 && _lastTurnDir != turnDir)
+                turnDir = 0;
+
+            _lastTurnDir = turnDir;
+
+            //if turning left start with leftmost unit
+            if (turnDir == -1)
+            {
+                currentPosition = spawnedUnitsArray[r, 0].transform.position;
+                leaderPos = spawnedUnitsArray[r - 1, 0].transform.position;
+
+                var dir = Subtract(currentPosition, leaderPos).normalized * (2 * _unitRadius);
+                spawnedUnitsArray[r, 0].transform.position = leaderPos + dir;
+
+                var perpDir = RightPerp(Subtract(leaderPos, currentPosition));
+
+                perpDir = perpDir.normalized * (2 * _unitRadius);
+
+                for (int c = 1; c < Formation.GetFormationWidth(); c++)
+                {
+                    spawnedUnitsArray[r, c].transform.position = spawnedUnitsArray[r, c - 1].transform.position + perpDir;
+                }
+            }
+            //else sturn at rightmost unit
+            else if (turnDir == 1)
+            {
+                currentPosition = spawnedUnitsArray[r, Formation.GetFormationWidth() - 1].transform.position;
+                leaderPos = spawnedUnitsArray[r - 1, Formation.GetFormationWidth() - 1].transform.position;
+
+                var dir = Subtract(currentPosition, leaderPos).normalized * (2 * _unitRadius);
+                spawnedUnitsArray[r, Formation.GetFormationWidth() - 1].transform.position = leaderPos + dir;
+
+                var perpDir = LeftPerp(Subtract(leaderPos, currentPosition));
+                perpDir = perpDir.normalized * (2 * _unitRadius);
+
+                for (int c = Formation.GetFormationWidth() - 2; c >= 0; c--)
+                {
+                    spawnedUnitsArray[r, c].transform.position = spawnedUnitsArray[r, c + 1].transform.position + perpDir;
+                }
+            }
+            else
+            {
+                for (int c = 0; c < Formation.GetFormationWidth(); c++)
+                {
+                    //get leader pos
+                    var curPos = spawnedUnitsArray[r, c].transform.position;
+                    var leaderPos1 = spawnedUnitsArray[r - 1, c].transform.position;
+
+                    var dirVec = Subtract(curPos, leaderPos1).normalized * (2 * _unitRadius);
+                    spawnedUnitsArray[r, c].transform.position = leaderPos1 + dirVec;
+                }
+            }
+        }
     }
     private void CalculateSteeringPath(Vector3 currentPosition, Vector3 currentDirection, Vector3 targetPosition, Vector3 targetDirection, float circleRadius)
     {
@@ -492,7 +588,7 @@ public class FormationHandler : MonoBehaviour
         Vector3 xVec = new Vector3(1, 0, 0);
         Vector3 zVec = new Vector3(0, 0, 1);
 
-        Vector3 startVec = Subtract(_currentTransformDirection.position, _c1);
+        Vector3 startVec = Subtract(_currentDirectionTransform.position, _c1);
 
         float startAngle = ToAngle(startVec);
         float endAngle = _c1_exitAngle;

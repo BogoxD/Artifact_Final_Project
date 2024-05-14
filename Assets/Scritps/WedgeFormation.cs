@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(FormationHandler))]
 public class WedgeFormation : BaseFormation
 {
     [SerializeField, Range(1,10)] int unitDepth = 3;

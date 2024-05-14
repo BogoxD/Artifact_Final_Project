@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(FormationHandler))]
 public class BoxFormation : BaseFormation
 {
     [SerializeField] [Range(0, 20)] int width = 3;
