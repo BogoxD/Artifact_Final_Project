@@ -138,7 +138,10 @@ public class FormationHandler : MonoBehaviour
         SetUpFormation();
 
         if (HasFinishedPath())
+        {
             state = FormationState.Idle;
+            SetUnitPositions(_path[pathIterator]);
+        }
 
         if (Time.time > nextActionTime)
         {
@@ -171,7 +174,7 @@ public class FormationHandler : MonoBehaviour
         else
         {
             //slow down formation if units fall behind
-            //SlowDownFormation(_spawnedUnits2DArray);
+            SlowDownFormation(_spawnedUnits2DArray);
 
             for (int i = 0; i < spawnedUnits.Count; i++)
             {
@@ -368,7 +371,6 @@ public class FormationHandler : MonoBehaviour
     }
     void SlowDownFormation(Unit[,] spawnedUnits2DArray)
     {
-
         for (int i = 1; i < spawnedUnits2DArray.GetLength(0); i++)
             for (int j = 0; j < spawnedUnits2DArray.GetLength(1); j++)
             {
@@ -378,7 +380,7 @@ public class FormationHandler : MonoBehaviour
                     //change formation state
                     state = FormationState.SlowingDown;
 
-                    //if (-0.2f > Vector3.Dot(spawnedUnits2DArray[i, j].transform.position.normalized, _currentDirectionTransform.forward.normalized))
+                    //if (0 > Vector3.Dot(spawnedUnits2DArray[i, j].transform.position.normalized, _currentDirectionTransform.right.normalized))
                     {
                         spawnedUnits2DArray[i, j].SetSpeed(5);
                     }
@@ -391,9 +393,6 @@ public class FormationHandler : MonoBehaviour
                 }
                 else
                 {
-                    //change formation state
-                    state = FormationState.Steering;
-
                     spawnedUnits2DArray[i, j].SetSpeed(3f);
                 }
             }
@@ -430,7 +429,7 @@ public class FormationHandler : MonoBehaviour
     }
     private bool HasFinishedPath()
     {
-        if (pathIterator == _path.Count)
+        if (pathIterator == _path.Count - 1)
             return true;
         else
             return false;
