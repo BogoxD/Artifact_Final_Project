@@ -46,10 +46,12 @@ public class FormationHandler : MonoBehaviour
         Steering,
         MovingToPositions,
         Idle,
-        Fighting
+        Fighting,
+        SlowingDown,
     }
     [SerializeField] private FormationState state = FormationState.Idle;
 
+    [SerializeField] private Unit[,] _spawnedUnits2DArray;
     [Header("Debug")]
 
     private bool _isFighting;
@@ -67,12 +69,17 @@ public class FormationHandler : MonoBehaviour
         set => _formation = value;
     }
     private ArmyHandler parentArmy;
+
     [HideInInspector] public List<Unit> spawnedUnits = new List<Unit>();
     [HideInInspector] public List<Vector3> unitPositions = new List<Vector3>();
-    private Unit[,] spawnedUnits2DArray;
+
+    //USED FOR COHESION CHECK AND SLOWING DOWN FORMATION
+    [HideInInspector] public List<Vector3> fixedUnitPositions = new List<Vector3>();
     public GameObject[] movingPoints;
     private int _PointIndexToMoveTo = 0;
+    private int _PointIndexPrevious;
 
+    //iterrate over the path each action time
     int pathIterator = 0;
     private float nextActionTime = 0.5f;
     public float period = 1f;
@@ -143,6 +150,8 @@ public class FormationHandler : MonoBehaviour
                 {
                     MoveUnits(_path[pathIterator]);
                     pathIterator++;
+
+                    _PointIndexPrevious = PointIndexToMoveTo;
                 }
             }
         }
@@ -158,6 +167,21 @@ public class FormationHandler : MonoBehaviour
             _targetPosition = _currentDirectionTransform.position;
             _targetDir = _currentDirectionTransform.forward;
         }
+        //on movement, move the units from behind to the ones in front
+        else
+        {
+            //slow down formation if units fall behind
+            //SlowDownFormation(_spawnedUnits2DArray);
+
+            for (int i = 0; i < spawnedUnits.Count; i++)
+            {
+                if (i >= Formation.GetFormationDepth())
+                {
+                    spawnedUnits[i].GetComponent<NavMeshAgent>().SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position -
+                       new Vector3(0, 0, Formation.GetSpread()));
+                }
+            }
+        }
 
         _hasDestinationReached = HasReachedDestination();
         DistancesFromUnitsToPoints = CalculateDistanceFromUnitToPoint(spawnedUnits, unitPositions);
@@ -165,16 +189,24 @@ public class FormationHandler : MonoBehaviour
     void SetUpFormation()
     {
         unitPositions = Formation.EvaluatePositions(_formationPoint).ToList();
+        fixedUnitPositions = Formation.EvaluatePositions(_centerOfMass + new Vector3(0, 0, 2)).ToList();
+
         //add units to formation
         if (unitPositions.Count > spawnedUnits.Count)
         {
             var remainingPositions = unitPositions.Skip(spawnedUnits.Count);
             Spawn(remainingPositions);
+
+            //update array on formation changes
+            _spawnedUnits2DArray = ConvertTo2DArray(spawnedUnits.ToArray(), Formation.GetFormationDepth(), Formation.GetFormationWidth());
         }
         //remove units from formation
         if (unitPositions.Count < spawnedUnits.Count)
         {
             Kill(spawnedUnits.Count - unitPositions.Count);
+
+            //update array on formation changes
+            _spawnedUnits2DArray = ConvertTo2DArray(spawnedUnits.ToArray(), Formation.GetFormationDepth(), Formation.GetFormationWidth());
         }
         //move units to positions slots
         for (int i = 0; i < spawnedUnits.Count; i++)
@@ -185,11 +217,8 @@ public class FormationHandler : MonoBehaviour
 
             if (agentTmp.enabled)
             {
-                //Slow down units if another falls behind
-                //SlowDownFormation();
                 if (state != FormationState.Steering)
                 {
-                    state = FormationState.MovingToPositions;
                     MoveUnitsToPositions();
                 }
 
@@ -214,7 +243,6 @@ public class FormationHandler : MonoBehaviour
 
             agent.SetDestination(unitPositions[i]);
         }
-
     }
     public void MoveUnitsToPositions()
     {
@@ -299,7 +327,7 @@ public class FormationHandler : MonoBehaviour
 
             if (agent)
             {
-                if (agent.magnitude <= 2.5)
+                if (agent.magnitude <= 2.5 || _PointIndexPrevious != _PointIndexToMoveTo)
                 {
                     j++;
                 }
@@ -338,36 +366,45 @@ public class FormationHandler : MonoBehaviour
             agentTmp.SetSpeed(speed);
         }
     }
-    void SlowDownFormation()
+    void SlowDownFormation(Unit[,] spawnedUnits2DArray)
     {
-        bool once = true;
 
-        foreach (Unit unitTmp in spawnedUnits)
-        {
-            if (Vector3.Distance(unitTmp.transform.position, _centerOfMass) > 4f)
+        for (int i = 1; i < spawnedUnits2DArray.GetLength(0); i++)
+            for (int j = 0; j < spawnedUnits2DArray.GetLength(1); j++)
             {
-                if (once)
+                //check distance between formationPosition and
+                if (Vector3.Distance(spawnedUnits2DArray[i - 1, j].transform.position, spawnedUnits2DArray[i, j].transform.position) > 4f)
                 {
-                    SetFormationSpeed(1.5f, 4f);
-                    once = false;
-                }
+                    //change formation state
+                    state = FormationState.SlowingDown;
 
-                unitTmp.SetSpeed(3f);
+                    //if (-0.2f > Vector3.Dot(spawnedUnits2DArray[i, j].transform.position.normalized, _currentDirectionTransform.forward.normalized))
+                    {
+                        spawnedUnits2DArray[i, j].SetSpeed(5);
+                    }
+
+                    foreach (Unit unitTmp in spawnedUnits)
+                    {
+                        if (spawnedUnits2DArray[i, j] != unitTmp)
+                            unitTmp.SetSpeed(2f);
+                    }
+                }
+                else
+                {
+                    //change formation state
+                    state = FormationState.Steering;
+
+                    spawnedUnits2DArray[i, j].SetSpeed(3f);
+                }
             }
-            else
-            {
-                SetFormationSpeed(3, 8);
-                once = true;
-            }
-        }
     }
     private static Unit[,] ConvertTo2DArray(Unit[] array, int height, int width)
     {
         Unit[,] output = new Unit[height, width];
 
-        for(int i = 0; i < height; i++)
+        for (int i = 0; i < height; i++)
         {
-            for(int j = 0; j < width; j++)
+            for (int j = 0; j < width; j++)
             {
                 output[i, j] = array[i * width + j];
             }
@@ -406,7 +443,7 @@ public class FormationHandler : MonoBehaviour
 
         for (int c = 0; c < Formation.GetFormationWidth(); c++)
         {
-            spawnedUnitsArray[0,c].transform.position = rootPos + RightPerp(currentDirection) * (2 * c * _unitRadius);
+            spawnedUnitsArray[0, c].transform.position = rootPos + RightPerp(currentDirection) * (2 * c * _unitRadius);
         }
 
         var prevRowDir = currentDirection.normalized;
@@ -700,7 +737,10 @@ public class FormationHandler : MonoBehaviour
     {
         for (int i = 0; i < unitPositions.Count; i++)
         {
+            Gizmos.color = Color.red;
             Gizmos.DrawSphere(unitPositions[i], 0.5f);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(fixedUnitPositions[i], 0.5f);
         }
 
         Gizmos.DrawCube(_centerOfMass, Vector3.one);
