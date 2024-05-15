@@ -738,8 +738,6 @@ public class FormationHandler : MonoBehaviour
         {
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(unitPositions[i], 0.5f);
-            Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(fixedUnitPositions[i], 0.5f);
         }
 
         Gizmos.DrawCube(_centerOfMass, Vector3.one);
