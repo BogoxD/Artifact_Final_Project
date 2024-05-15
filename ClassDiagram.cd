@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="BaseFormation">
+    <Position X="5.75" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAgAAAgAAAAACAIAAAAAAAAAAIAAAAAAAAAAEAA=</HashCode>
+      <FileName>Assets\Scritps\BaseFormation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FormationHandler">
+    <Position X="11.25" Y="2" Width="2.25" />
+    <Members>
+      <Method Name="CalculateDistanceFromUnitToPoint" Hidden="true" />
+      <Method Name="ConvertTo2DArray" Hidden="true" />
+      <Method Name="FixedUpdate" Hidden="true" />
+      <Method Name="GeneratePath_Clockwise" Hidden="true" />
+      <Method Name="GeneratePath_CounterClockwise" Hidden="true" />
+      <Method Name="GeneratePathArray" Hidden="true" />
+      <Method Name="GetFormationDirection" Hidden="true" />
+      <Method Name="GetTargetPos" Hidden="true" />
+      <Method Name="Kill" Hidden="true" />
+      <Method Name="LeftPerp" Hidden="true" />
+      <Method Name="NextPathPos" Hidden="true" />
+      <Method Name="OnDrawGizmos" Hidden="true" />
+      <Method Name="Perpendicular" Hidden="true" />
+      <Method Name="ReturnAvarageSpeed" Hidden="true" />
+      <Method Name="RightPerp" Hidden="true" />
+      <Method Name="Spawn" Hidden="true" />
+      <Method Name="Start" Hidden="true" />
+      <Method Name="Subtract" Hidden="true" />
+      <Method Name="ToAngle" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="FormationHandler.FormationState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scritps\FormationHandler.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AEQE0WBAEmxCAQMARAEnRGMESASEAABVKJDUAwBBIAA=</HashCode>
+      <FileName>Assets\Scritps\FormationHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BoxFormation">
+    <Position X="8.25" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AgAAAEAAAAAAAAAASAAAAAAAAAAAAAAAAAAAIAAAEAA=</HashCode>
+      <FileName>Assets\Scritps\BoxFormation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RadialFormation">
+    <Position X="3.5" Y="5.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAACAAAACAACACAAAAAAQAAAAAAAAAAAAAAkAA=</HashCode>
+      <FileName>Assets\Scritps\RadialFormation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WedgeFormation">
+    <Position X="5.75" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AgAAAEAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAkAA=</HashCode>
+      <FileName>Assets\Scritps\WedgeFormation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArmyHandler">
+    <Position X="14.25" Y="2" Width="2.25" />
+    <Members>
+      <Field Name="_formationPoint" Hidden="true" />
+      <Field Name="formationPrefab" Hidden="true" />
+      <Field Name="formationsPositions" Hidden="true" />
+      <Method Name="GetArmyNoise" Hidden="true" />
+      <Method Name="GetFormationPositions" Hidden="true" />
+      <Method Name="SetFormationPosition" Hidden="true" />
+      <Field Name="spawnedFormations" Hidden="true" />
+      <Method Name="Update" Hidden="true" />
+      <Field Name="waypoints" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAUEIEgAAAAACAEAAAAAUQAAQAJCAoBEAAAAAUIQAQA=</HashCode>
+      <FileName>Assets\Scritps\ArmyHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UnityEngine.MonoBehaviour" Collapsed="true">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Unit" Collapsed="true">
+    <Position X="8.75" Y="1.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAQAAAQIgAAMAAEEAAQAABBAAgAEIAAAAUQAAAgAAEI=</HashCode>
+      <FileName>Assets\Scritps\Unit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

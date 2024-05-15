@@ -24,6 +24,7 @@ public class ArmyHandler : MonoBehaviour
     public List<Vector3> initialPositions = new List<Vector3>();
 
     public List<Transform> waypoints;
+
     private void Update()
     {
         SetupArmy();
