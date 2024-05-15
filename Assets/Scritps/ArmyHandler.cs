@@ -8,7 +8,7 @@ public class ArmyHandler : MonoBehaviour
 {
     [SerializeField] [Range(0, 10)] int armyWidth = 2;
     [SerializeField] [Range(0, 10)] int armyDepth = 2;
-    [SerializeField] [Range(8, 20)] int Spread = 8;
+    [SerializeField] [Range(0, 20)] int Spread = 8;
     [SerializeField] [Range(-20f, 20f)] float RowOffset = 0f;
     [SerializeField] [Range(2, 10)] int armySpeed = 2;
     [SerializeField] [Range(0, 1)] float noise = 0f;
@@ -50,7 +50,7 @@ public class ArmyHandler : MonoBehaviour
             formHandler.SetUnitPositions(formationsPositions[i]);
 
             formationsPositions[i] = formHandler.FindCenterOfMass(formHandler.spawnedUnits);
-            SetFormationPosition(formHandler.transform.position);
+            //SetFormationPosition(formHandler.transform.position);
         }
     }
     public void MoveArmy(Transform point)

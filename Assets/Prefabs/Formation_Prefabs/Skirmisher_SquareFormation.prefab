@@ -67,7 +67,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Skirmisher_SquareFormation
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3622917723177107170, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
+    - {fileID: 25267389912060143, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: dbc7ab7ed7d9c0643a06d53dd8516bf5, type: 3}
 --- !u!4 &1740786272270573258 stripped
 Transform:

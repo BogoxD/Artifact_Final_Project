@@ -542,7 +542,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6028010042425623682, guid: ea4bde282857b0949a226219e47a3fd7, type: 3}
       propertyPath: Spread
-      value: 14
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6028010042425623682, guid: ea4bde282857b0949a226219e47a3fd7, type: 3}
       propertyPath: RowOffset
@@ -2873,7 +2873,7 @@ Transform:
   m_GameObject: {fileID: 1058487200}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -0.4}
-  m_LocalScale: {x: 100, y: 1, z: 100}
+  m_LocalScale: {x: 500, y: 1, z: 500}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -5444,7 +5444,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6028010042425623682, guid: ea4bde282857b0949a226219e47a3fd7, type: 3}
       propertyPath: Spread
-      value: 9
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6028010042425623682, guid: ea4bde282857b0949a226219e47a3fd7, type: 3}
       propertyPath: armyDepth
@@ -5452,7 +5452,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6028010042425623682, guid: ea4bde282857b0949a226219e47a3fd7, type: 3}
       propertyPath: armyWidth
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6028010042425623682, guid: ea4bde282857b0949a226219e47a3fd7, type: 3}
       propertyPath: m_Enabled
@@ -5464,7 +5464,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6028010042425623683, guid: ea4bde282857b0949a226219e47a3fd7, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6028010042425623685, guid: ea4bde282857b0949a226219e47a3fd7, type: 3}
       propertyPath: m_RootOrder
