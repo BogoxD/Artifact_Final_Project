@@ -74,7 +74,6 @@ GameObject:
   - component: {fileID: 6374962520867076291}
   - component: {fileID: 3185740075477017722}
   - component: {fileID: 5962469704175086574}
-  - component: {fileID: 5237166275156225376}
   m_Layer: 7
   m_Name: Skirmisher
   m_TagString: TeamBlue
@@ -249,23 +248,6 @@ MonoBehaviour:
   canSeeEnemy: 0
   enemyTargets: []
   closestTarget: {fileID: 0}
---- !u!114 &5237166275156225376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3316376772576343486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdb90d8170d089e4e8f6d5d71088a85b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ThrowableRef: {fileID: 4084589826628434531}
-  firePoint: {fileID: 1097075746684859633}
-  projectileSpeed: 15
-  throwForce: 6
-  throwUpwardForce: 3
 --- !u!1 &5697546386140397818
 GameObject:
   m_ObjectHideFlags: 0
@@ -558,11 +540,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9fb39c598d8bb8f4b92467a226228950, type: 3}
---- !u!1 &4084589826628434531 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8303348358644969391, guid: 9fb39c598d8bb8f4b92467a226228950, type: 3}
-  m_PrefabInstance: {fileID: 5445990599914657228}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4371230912806129076 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8592218012621445240, guid: 9fb39c598d8bb8f4b92467a226228950, type: 3}

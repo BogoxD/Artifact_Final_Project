@@ -68,7 +68,7 @@ public class Unit : MonoBehaviour
             }
         }
     }
-
+    //USED FOR COMBAT
     /*private void OnCollisionEnter(Collision collision)
     {
         //enemy collides with friendly
