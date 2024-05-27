@@ -175,13 +175,16 @@ public class FormationHandler : MonoBehaviour
         {
             //slow down formation if units fall behind
             //SlowDownFormation(_spawnedUnits2DArray);
-
-            for (int i = 0; i < spawnedUnits.Count; i++)
+            if (state != FormationState.Idle)
             {
-                if (i >= Formation.GetFormationDepth())
+
+                for (int i = 0; i < spawnedUnits.Count; i++)
                 {
-                    spawnedUnits[i].GetComponent<NavMeshAgent>().SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position -
-                       new Vector3(0, 0, Formation.GetSpread()));
+                    if (i >= Formation.GetFormationDepth())
+                    {
+                        spawnedUnits[i].GetComponent<NavMeshAgent>().SetDestination(spawnedUnits[i - Formation.GetFormationDepth()].transform.position -
+                           new Vector3(0, 0, Formation.GetSpread()));
+                    }
                 }
             }
         }
@@ -201,7 +204,7 @@ public class FormationHandler : MonoBehaviour
             Spawn(remainingPositions);
 
             //update array on formation changes
-            _spawnedUnits2DArray = ConvertTo2DArray(spawnedUnits.ToArray(), Formation.GetFormationDepth(), Formation.GetFormationWidth());
+            //_spawnedUnits2DArray = ConvertTo2DArray(spawnedUnits.ToArray(), Formation.GetFormationDepth(), Formation.GetFormationWidth());
         }
         //remove units from formation
         if (unitPositions.Count < spawnedUnits.Count)
@@ -209,7 +212,7 @@ public class FormationHandler : MonoBehaviour
             Kill(spawnedUnits.Count - unitPositions.Count);
 
             //update array on formation changes
-            _spawnedUnits2DArray = ConvertTo2DArray(spawnedUnits.ToArray(), Formation.GetFormationDepth(), Formation.GetFormationWidth());
+            //_spawnedUnits2DArray = ConvertTo2DArray(spawnedUnits.ToArray(), Formation.GetFormationDepth(), Formation.GetFormationWidth());
         }
         //move units to positions slots
         for (int i = 0; i < spawnedUnits.Count; i++)
