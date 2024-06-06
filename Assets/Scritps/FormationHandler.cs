@@ -27,6 +27,7 @@ public class FormationHandler : MonoBehaviour
     //path
     [SerializeField] List<Vector3> _path = new List<Vector3>();
 
+    private Vector3 _formationPoint;
     private Vector3 _targetPosition;
     private Vector3 _targetDir;
     private Vector3 _centerOfMass = new();
@@ -37,8 +38,6 @@ public class FormationHandler : MonoBehaviour
     [Header("GameObjects")]
 
     [SerializeField] private GameObject _unitPrefab;
-    private Vector3 _formationPoint;
-    [HideInInspector] public List<float> DistancesFromUnitsToPoints;
 
     //Formation State
     private enum FormationState
@@ -51,10 +50,10 @@ public class FormationHandler : MonoBehaviour
     }
     [SerializeField] private FormationState state = FormationState.Idle;
 
-    [SerializeField] private Unit[,] _spawnedUnits2DArray;
     [Header("Debug")]
-
     private bool _isFighting;
+
+    //Steering Circles
     [SerializeField] private Transform c2T;
     [SerializeField] private Transform c1T;
 
@@ -72,6 +71,7 @@ public class FormationHandler : MonoBehaviour
 
     [HideInInspector] public List<Unit> spawnedUnits = new List<Unit>();
     [HideInInspector] public List<Vector3> unitPositions = new List<Vector3>();
+    [HideInInspector] public List<float> DistancesFromUnitsToPoints;
 
     //USED FOR COHESION CHECK AND SLOWING DOWN FORMATION
     [HideInInspector] public List<Vector3> fixedUnitPositions = new List<Vector3>();
@@ -84,6 +84,7 @@ public class FormationHandler : MonoBehaviour
     private float nextActionTime = 0.5f;
     public float period = 1f;
 
+    //Set the points for the formation to move to
     public int PointIndexToMoveTo
     {
         get { return _PointIndexToMoveTo; }
@@ -137,6 +138,7 @@ public class FormationHandler : MonoBehaviour
         //Update formation
         SetUpFormation();
 
+        //Check if the formaiton has finished walking on the current path
         if (HasFinishedPath())
         {
             state = FormationState.Idle;
@@ -152,7 +154,7 @@ public class FormationHandler : MonoBehaviour
                 if (NextPathPos() && state == FormationState.Steering)
                 {
                     MoveUnits(_path[pathIterator]);
-                    
+
                     pathIterator++;
                     _PointIndexPrevious = PointIndexToMoveTo;
                 }
@@ -160,7 +162,7 @@ public class FormationHandler : MonoBehaviour
         }
 
         _avarageSpeed = ReturnAvarageSpeed(spawnedUnits);
-        _currentDirectionTransform.forward = GetFormationDirection();
+        _currentDirectionTransform.forward = GetAvarageDirection();
         _centerOfMass = FindCenterOfMass(spawnedUnits);
 
         //formationTrans is used for calculating the steering path with circles
@@ -173,11 +175,8 @@ public class FormationHandler : MonoBehaviour
         //on movement, move the units from behind to the ones in front
         else
         {
-            //slow down formation if units fall behind
-            //SlowDownFormation(_spawnedUnits2DArray);
             if (state != FormationState.Idle)
             {
-
                 for (int i = 0; i < spawnedUnits.Count; i++)
                 {
                     if (i >= Formation.GetFormationDepth())
@@ -196,23 +195,17 @@ public class FormationHandler : MonoBehaviour
     {
         unitPositions = Formation.EvaluatePositions(_formationPoint).ToList();
         fixedUnitPositions = Formation.EvaluatePositions(_centerOfMass + new Vector3(0, 0, 2)).ToList();
-
+        
         //add units to formation
         if (unitPositions.Count > spawnedUnits.Count)
         {
             var remainingPositions = unitPositions.Skip(spawnedUnits.Count);
             Spawn(remainingPositions);
-
-            //update array on formation changes
-            //_spawnedUnits2DArray = ConvertTo2DArray(spawnedUnits.ToArray(), Formation.GetFormationDepth(), Formation.GetFormationWidth());
         }
         //remove units from formation
         if (unitPositions.Count < spawnedUnits.Count)
         {
             Kill(spawnedUnits.Count - unitPositions.Count);
-
-            //update array on formation changes
-            //_spawnedUnits2DArray = ConvertTo2DArray(spawnedUnits.ToArray(), Formation.GetFormationDepth(), Formation.GetFormationWidth());
         }
         //move units to positions slots
         for (int i = 0; i < spawnedUnits.Count; i++)
@@ -333,7 +326,7 @@ public class FormationHandler : MonoBehaviour
 
             if (agent)
             {
-                if (agent.magnitude < 2.5 || _PointIndexPrevious != _PointIndexToMoveTo)
+                if (agent.magnitude < 2.5f || _PointIndexPrevious != _PointIndexToMoveTo)
                 {
                     j++;
                 }
@@ -372,33 +365,25 @@ public class FormationHandler : MonoBehaviour
             agentTmp.SetSpeed(speed);
         }
     }
-    void SlowDownFormation(Unit[,] spawnedUnits2DArray)
+    //to be fixed
+    void SlowDownFormation(List<Unit> spawnedUnits, Vector3 forward)
     {
-        for (int i = 1; i < spawnedUnits2DArray.GetLength(0); i++)
-            for (int j = 0; j < spawnedUnits2DArray.GetLength(1); j++)
+        for (int i = 1; i < spawnedUnits.Count; i++)
+        {
+            //check distance between formationPosition and
+            if (Vector3.Distance(spawnedUnits[i].transform.position, fixedUnitPositions[i]) > 3f)
             {
-                //check distance between formationPosition and
-                if (Vector3.Distance(spawnedUnits2DArray[i - 1, j].transform.position, spawnedUnits2DArray[i, j].transform.position) > 4f)
-                {
-                    //change formation state
-                    state = FormationState.SlowingDown;
+                //change formation state
+                state = FormationState.SlowingDown;
 
-                    if (0 >= Vector3.Dot(spawnedUnits2DArray[i, j].transform.position.normalized, _currentDirectionTransform.right.normalized))
-                    {
-                        spawnedUnits2DArray[i, j].SetSpeed(5);
-                    }
+                spawnedUnits[i].SetSpeed(3f);
 
-                    foreach (Unit unitTmp in spawnedUnits)
-                    {
-                        if (spawnedUnits2DArray[i, j] != unitTmp)
-                            unitTmp.SetSpeed(2.5f);
-                    }
-                }
-                else
-                {
-                    spawnedUnits2DArray[i, j].SetSpeed(3f);
-                }
             }
+            else
+            {
+                spawnedUnits[i].SetSpeed(5f);
+            }
+        }
     }
     private static Unit[,] ConvertTo2DArray(Unit[] array, int height, int width)
     {
@@ -418,7 +403,7 @@ public class FormationHandler : MonoBehaviour
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
     //STEERING FORMATION
-    private Vector3 GetFormationDirection()
+    private Vector3 GetAvarageDirection()
     {
         Vector3 direction = new Vector3();
 
